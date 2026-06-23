@@ -19,6 +19,61 @@ function crmHeaders() {
   return CRM_API_KEY ? { Authorization: `Bearer ${CRM_API_KEY}` } : {};
 }
 
+/**
+ * TBA-SEC-05: Startup validation for CRM_API_KEY.
+ * Prevents the service from starting with an empty or missing key.
+ */
+function validateConfig(apiKey = CRM_API_KEY) {
+  if (!apiKey || apiKey.trim() === '') {
+    throw new Error('TBA-SEC-05: CRM_API_KEY is required. Set the CRM_API_KEY environment variable.');
+  }
+}
+
+/**
+ * Shared API key middleware for internal service routes.
+ * Rejects requests with 401 when x-api-key header is missing or invalid.
+ */
+function requireApiKey(req, res, next) {
+  const key = req.headers['x-api-key'];
+  if (!key || key !== CRM_API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized: missing or invalid x-api-key' });
+  }
+  next();
+}
+
+// TBA-SEC-03: Simple in-memory rate limiter (10 requests/min per IP)
+const requestCounts = new Map(); // ip -> { count, resetAt }
+function rateLimitMiddleware(req, res, next) {
+  const ip = req.ip || req.connection.remoteAddress || 'unknown';
+  const now = Date.now();
+  const windowMs = 60 * 1000;
+  const maxRequests = 10;
+
+  const record = requestCounts.get(ip);
+  if (!record || now > record.resetAt) {
+    requestCounts.set(ip, { count: 1, resetAt: now + windowMs });
+    return next();
+  }
+
+  if (record.count >= maxRequests) {
+    return res.status(429).json({ error: 'Rate limit exceeded. Try again later.' });
+  }
+
+  record.count += 1;
+  next();
+}
+
+// TBA-SEC-04: Minimal CORS middleware for cross-origin safety
+function corsMiddleware(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  next();
+}
+
 function normalizeLeadId(value) {
   const numeric = Number(value);
   return Number.isInteger(numeric) && numeric > 0 ? numeric : null;
@@ -197,6 +252,21 @@ function leadDisplayName(lead) {
   return [lead.firstName, lead.lastName].filter(Boolean).join(' ') || lead.email || `Lead ${lead.leadId || lead.id}`;
 }
 
+/**
+ * TBA-SEC-07: Mask PII before logging.
+ * Replaces interior characters with asterisks to avoid leaking full names.
+ */
+function maskName(name) {
+  if (!name || typeof name !== 'string') return '***';
+  return name
+    .split(' ')
+    .map(part => {
+      if (part.length <= 2) return part;
+      return part[0] + '*'.repeat(part.length - 2) + part[part.length - 1];
+    })
+    .join(' ');
+}
+
 async function fetchLeadFromCRM(leadId, httpClient = axios) {
   const response = await httpClient.get(`${CRM_BASE_URL}/api/internal/leads/${leadId}`, {
     headers: crmHeaders(),
@@ -277,7 +347,7 @@ async function bookToursForLead(input, propertyList, clientPreferredTime, option
     }
 
     const schedule = calculateTourSchedule(request.clientPreferredTime, properties.length, request.tourDate);
-    console.log(`[TourAgent] Starting booking for lead ${request.leadId} (${leadDisplayName(lead)})`);
+    console.log(`[TourAgent] Starting booking for lead ${request.leadId} (${maskName(leadDisplayName(lead))})`);
     console.log(`[TourAgent] Properties: ${properties.map(p => p.name).join(', ')}`);
 
     if (!request.dryRun) {
@@ -430,21 +500,26 @@ async function bookToursForLead(input, propertyList, clientPreferredTime, option
 }
 
 async function bookPropertyTour(browser, property, tourDetails) {
-  // Create a fresh browser context with anti-bot measures
-  const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    viewport: { width: 1920, height: 1080 },
-  });
-
-  const page = await context.newPage();
-  page.setDefaultTimeout(15000);
-
-  // Hide navigator.webdriver to reduce bot detection
-  await page.addInitScript(() => {
-    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
-  });
+  // SAFETY: Create context and page inside the try block so the finally block
+  // always runs cleanup even if newContext() or newPage() throws.
+  let context = null;
+  let page = null;
 
   try {
+    // Create a fresh browser context with anti-bot measures
+    context = await browser.newContext({
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      viewport: { width: 1920, height: 1080 },
+    });
+
+    page = await context.newPage();
+    page.setDefaultTimeout(15000);
+
+    // Hide navigator.webdriver to reduce bot detection
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+    });
+
     await page.goto(property.website, { waitUntil: 'networkidle' });
     await captureScreenshot(page, 'page_loaded', tourDetails.leadId || 'unknown', property.name);
 
@@ -475,11 +550,18 @@ async function bookPropertyTour(browser, property, tourDetails) {
 
     return { ...booking, platform: platformType };
   } catch (err) {
-    await captureScreenshot(page, 'exception', tourDetails.leadId || 'unknown', property.name);
+    if (page) {
+      await captureScreenshot(page, 'exception', tourDetails.leadId || 'unknown', property.name).catch(() => {});
+    }
     return { success: false, error: err.message };
   } finally {
-    await page.close();
-    await context.close();
+    // Robust cleanup: close page and context even if one throws.
+    if (page) {
+      await page.close().catch(() => {});
+    }
+    if (context) {
+      await context.close().catch(() => {});
+    }
   }
 }
 
@@ -498,6 +580,15 @@ async function detectBookingPlatform(page) {
 
 async function bookAppfolioTour(page, property, tourDetails) {
   try {
+    // SAFETY: noSubmit mode fills the form but never clicks the submit button.
+    if (tourDetails.noSubmit) {
+      return {
+        success: false,
+        error: 'Appfolio: noSubmit mode — form filled but not submitted',
+        status: 'not_submitted',
+      };
+    }
+
     await page.click('button:has-text("Schedule Tour"), a:has-text("Schedule Tour")');
     await page.fill('input[name="visitor_first_name"], input[name="first_name"]', tourDetails.leadName);
     await page.fill('input[name="visitor_phone"], input[type="tel"]', tourDetails.leadPhone);
@@ -516,7 +607,8 @@ async function bookAppfolioTour(page, property, tourDetails) {
 
     return {
       success: true,
-      confirmationNumber: confirmationText || `appfolio-${Date.now()}`,
+      // TBA-LOG-03: do not fabricate confirmation numbers; use null when not found
+      confirmationNumber: confirmationText || null,
       bookedAt: new Date().toISOString(),
     };
   } catch (err) {
@@ -526,6 +618,15 @@ async function bookAppfolioTour(page, property, tourDetails) {
 
 async function bookLeaselabsTour(page, property, tourDetails) {
   try {
+    // SAFETY: noSubmit mode fills the form but never clicks the submit button.
+    if (tourDetails.noSubmit) {
+      return {
+        success: false,
+        error: 'LeaseLabs: noSubmit mode — form filled but not submitted',
+        status: 'not_submitted',
+      };
+    }
+
     await page.click('a:has-text("Schedule a Tour"), button:has-text("Schedule a Tour")');
     await page.fill('input[id="first_name"], input[name="firstName"]', tourDetails.leadName);
     await page.fill('input[id="phone"], input[type="tel"]', tourDetails.leadPhone);
@@ -537,9 +638,12 @@ async function bookLeaselabsTour(page, property, tourDetails) {
     await page.click('button:has-text("Book Tour"), button[type="submit"]');
     await page.waitForSelector('text=/booked|confirmed|confirmation/i', { timeout: 5000 });
 
+    // TBA-LOG-04: attempt to extract a real confirmation number; do not fabricate
+    const confirmationText = await page.textContent('text=/booked|confirmed|confirmation/i').catch(() => null);
+
     return {
       success: true,
-      confirmationNumber: `leaselabs-${Date.now()}`,
+      confirmationNumber: confirmationText || null,
       bookedAt: new Date().toISOString(),
     };
   } catch (err) {
@@ -631,11 +735,11 @@ async function bookGenericTour(page, property, tourDetails) {
       
       if (tourDetails.noSubmit) {
         console.log('[TourAgent] noSubmit=true, skipping form submission');
+        // TBA-LOG-02: do not claim success when the form was not actually submitted
         return {
-          success: true,
-          confirmationNumber: `generic-no-submit-${Date.now()}`,
-          confirmationText: 'Form filled but not submitted (noSubmit mode)',
-          bookedAt: new Date().toISOString(),
+          success: false,
+          error: 'Form filled but not submitted (noSubmit mode)',
+          status: 'not_submitted',
         };
       }
       
@@ -666,7 +770,8 @@ async function bookGenericTour(page, property, tourDetails) {
       if (confirmationText) {
         return {
           success: true,
-          confirmationNumber: `generic-${Date.now()}`,
+          // TBA-LOG-05: do not fabricate confirmation numbers
+          confirmationNumber: null,
           confirmationText,
           bookedAt: new Date().toISOString(),
         };
@@ -713,11 +818,11 @@ async function bookGenericTour(page, property, tourDetails) {
     // 4. Submit the form (unless noSubmit is true)
     if (tourDetails.noSubmit) {
       console.log('[TourAgent] noSubmit=true, skipping form submission');
+      // TBA-LOG-02: do not claim success when the form was not actually submitted
       return {
-        success: true,
-        confirmationNumber: `generic-no-submit-${Date.now()}`,
-        confirmationText: 'Form filled but not submitted (noSubmit mode)',
-        bookedAt: new Date().toISOString(),
+        success: false,
+        error: 'Form filled but not submitted (noSubmit mode)',
+        status: 'not_submitted',
       };
     }
 
@@ -752,7 +857,8 @@ async function bookGenericTour(page, property, tourDetails) {
 
     return {
       success: true,
-      confirmationNumber: `generic-${Date.now()}`,
+      // Do not fabricate confirmation numbers
+      confirmationNumber: null,
       confirmationText,
       bookedAt: new Date().toISOString(),
     };
@@ -828,8 +934,9 @@ async function requestItineraryGeneration(leadId, date, options = {}) {
 function createApp() {
   const app = express();
   app.use(express.json({ limit: '1mb' }));
+  app.use(corsMiddleware); // TBA-SEC-04: apply CORS to all routes
 
-  app.post('/api/book-tours', async (req, res) => {
+  app.post('/api/book-tours', rateLimitMiddleware, requireApiKey, async (req, res) => {
     const validation = validateBookingRequest(req.body || {});
     if (!validation.ok) {
       return res.status(400).json({ error: 'Invalid booking request', details: validation.errors });
@@ -866,6 +973,7 @@ function createApp() {
 }
 
 function startServer(port = process.env.PORT || 3001) {
+  validateConfig(); // TBA-SEC-05: enforce CRM_API_KEY before accepting traffic
   const app = createApp();
   return app.listen(port, () => {
     console.log(`[TourAgent] running on http://localhost:${port}`);
@@ -881,11 +989,17 @@ module.exports = {
   bookToursForLead,
   calculateTourSchedule,
   createApp,
+  corsMiddleware,
   detectBookingPlatform,
+  maskName,
   normalizeProperty,
+  rateLimitMiddleware,
+  requireApiKey,
   startServer,
   validateBookingRequest,
-  // Export new helpers for testing
-  captureScreenshot,
-  preFlightCheck,
+  validateConfig,
+  // Export booking handlers for focused testing (noSubmit safety, cleanup robustness)
+  bookAppfolioTour,
+  bookLeaselabsTour,
+  bookPropertyTour,
 };
