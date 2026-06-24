@@ -87,8 +87,12 @@ function isIsoDate(value) {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value.trim());
 }
 
+function utcNowIso() {
+  return new Date(new Date().toISOString()).toISOString();
+}
+
 function todayIsoDate() {
-  return new Date().toISOString().slice(0, 10);
+  return utcNowIso().slice(0, 10);
 }
 
 function safeString(value) {
@@ -232,17 +236,17 @@ function calculateTourSchedule(startTime, numProperties, tourDate = todayIsoDate
   if (!isIsoDate(tourDate)) throw new Error('tourDate must be YYYY-MM-DD');
 
   const schedule = [];
-  const currentTime = new Date(`${tourDate}T${startTime}:00`);
+  const currentTime = new Date(`${tourDate}T${startTime}:00Z`);
 
   for (let i = 0; i < numProperties; i++) {
-    const hours = String(currentTime.getHours()).padStart(2, '0');
-    const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+    const hours = String(currentTime.getUTCHours()).padStart(2, '0');
+    const minutes = String(currentTime.getUTCMinutes()).padStart(2, '0');
     schedule.push({
       date: tourDate,
       time: `${hours}:${minutes}`,
       startsAt: `${tourDate}T${hours}:${minutes}:00`,
     });
-    currentTime.setMinutes(currentTime.getMinutes() + 50);
+    currentTime.setUTCMinutes(currentTime.getUTCMinutes() + 50);
   }
 
   return schedule;
@@ -609,7 +613,7 @@ async function bookAppfolioTour(page, property, tourDetails) {
       success: true,
       // TBA-LOG-03: do not fabricate confirmation numbers; use null when not found
       confirmationNumber: confirmationText || null,
-      bookedAt: new Date().toISOString(),
+      bookedAt: utcNowIso(),
     };
   } catch (err) {
     return { success: false, error: `Appfolio booking failed: ${err.message}` };
@@ -644,7 +648,7 @@ async function bookLeaselabsTour(page, property, tourDetails) {
     return {
       success: true,
       confirmationNumber: confirmationText || null,
-      bookedAt: new Date().toISOString(),
+      bookedAt: utcNowIso(),
     };
   } catch (err) {
     return { success: false, error: `LeaseLabs booking failed: ${err.message}` };
@@ -773,7 +777,7 @@ async function bookGenericTour(page, property, tourDetails) {
           // TBA-LOG-05: do not fabricate confirmation numbers
           confirmationNumber: null,
           confirmationText,
-          bookedAt: new Date().toISOString(),
+          bookedAt: utcNowIso(),
         };
       }
       
@@ -860,7 +864,7 @@ async function bookGenericTour(page, property, tourDetails) {
       // Do not fabricate confirmation numbers
       confirmationNumber: null,
       confirmationText,
-      bookedAt: new Date().toISOString(),
+      bookedAt: utcNowIso(),
     };
   } catch (err) {
     return { success: false, error: `Generic booking failed: ${err.message}` };
