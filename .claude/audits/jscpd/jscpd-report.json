@@ -1,0 +1,381 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 13,
+        "endLoc": {
+          "column": 38,
+          "line": 13,
+          "position": 457
+        },
+        "name": "inspect-form.js",
+        "start": 7,
+        "startLoc": {
+          "column": 2,
+          "line": 7,
+          "position": 191
+        }
+      },
+      "format": "javascript",
+      "fragment": "  await page.goto('https://coopsummerstreet.com/', { waitUntil: 'domcontentloaded', timeout: 20000 });\n  await page.waitForTimeout(3000);\n  \n  // Close lightbox\n  await page.keyboard.press('Escape');\n  await page.evaluate(() => {\n    const lb = document.querySelector('#screen-modular-lightbox, .lightbox-slug-special');",
+      "lines": 7,
+      "secondFile": {
+        "end": 16,
+        "endLoc": {
+          "column": 40,
+          "line": 16,
+          "position": 595
+        },
+        "name": "test-form-fill.js",
+        "start": 10,
+        "startLoc": {
+          "column": 4,
+          "line": 10,
+          "position": 300
+        }
+      },
+      "tokens": 52
+    },
+    {
+      "firstFile": {
+        "end": 20,
+        "endLoc": {
+          "column": 47,
+          "line": 20,
+          "position": 721
+        },
+        "name": "inspect-form.js",
+        "start": 13,
+        "startLoc": {
+          "column": 88,
+          "line": 13,
+          "position": 507
+        }
+      },
+      "format": "javascript",
+      "fragment": "    const lb = document.querySelector('#screen-modular-lightbox, .lightbox-slug-special');\n    if (lb) lb.style.display = 'none';\n  });\n  await page.waitForTimeout(500);\n  \n  // Click Schedule\n  const btn = page.locator('a:has-text(\"Schedule\")').first();\n  if (await btn.isVisible().catch(() => false)) await btn.click();",
+      "lines": 8,
+      "secondFile": {
+        "end": 23,
+        "endLoc": {
+          "column": 49,
+          "line": 23,
+          "position": 868
+        },
+        "name": "test-form-fill.js",
+        "start": 16,
+        "startLoc": {
+          "column": 66,
+          "line": 16,
+          "position": 621
+        }
+      },
+      "tokens": 56
+    },
+    {
+      "firstFile": {
+        "end": 19,
+        "endLoc": {
+          "column": 18,
+          "line": 19,
+          "position": 704
+        },
+        "name": "test-coopsummerstreet.js",
+        "start": 4,
+        "startLoc": {
+          "column": 72,
+          "line": 4,
+          "position": 155
+        }
+      },
+      "format": "javascript",
+      "fragment": "  console.log('[Test] Starting standalone test for coopsummerstreet.com');\n\n  const browser = await playwright.chromium.launch({ headless: true });\n  const context = await browser.newContext({\n    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',\n    viewport: { width: 1920, height: 1080 },\n  });\n  const page = await context.newPage();\n  page.setDefaultTimeout(20000);\n\n  // Hide navigator.webdriver\n  await page.addInitScript(() => {\n    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });\n  });\n\n  const debugDir = '/Users/ej/Documents/ejwork/LeadInfo/BookingScreenshots/phase3-test';",
+      "lines": 16,
+      "secondFile": {
+        "end": 18,
+        "endLoc": {
+          "column": 18,
+          "line": 18,
+          "position": 685
+        },
+        "name": "test-full-flow-no-submit.js",
+        "start": 4,
+        "startLoc": {
+          "column": 84,
+          "line": 4,
+          "position": 166
+        }
+      },
+      "tokens": 97
+    },
+    {
+      "firstFile": {
+        "end": 157,
+        "endLoc": {
+          "column": 1,
+          "line": 157,
+          "position": 6480
+        },
+        "name": "test-coopsummerstreet.js",
+        "start": 148,
+        "startLoc": {
+          "column": 61,
+          "line": 148,
+          "position": 6232
+        }
+      },
+      "format": "javascript",
+      "fragment": "    console.log('[Test] Test complete. Screenshots saved to:', debugDir);\n\n  } catch (err) {\n    console.error('[Test] Error:', err.message);\n    await page.screenshot({ path: `${debugDir}/error.png`, fullPage: true }).catch(() => {});\n  } finally {\n    await context.close();\n    await browser.close();\n  }\n}",
+      "lines": 10,
+      "secondFile": {
+        "end": 149,
+        "endLoc": {
+          "column": 1,
+          "line": 149,
+          "position": 6094
+        },
+        "name": "test-full-flow-no-submit.js",
+        "start": 140,
+        "startLoc": {
+          "column": 46,
+          "line": 140,
+          "position": 5846
+        }
+      },
+      "tokens": 67
+    },
+    {
+      "firstFile": {
+        "end": 104,
+        "endLoc": {
+          "column": 7,
+          "line": 104,
+          "position": 3749
+        },
+        "name": "test-form-fill.js",
+        "start": 92,
+        "startLoc": {
+          "column": 63,
+          "line": 92,
+          "position": 3252
+        }
+      },
+      "format": "javascript",
+      "fragment": "    console.log('Form values:', JSON.stringify(values, null, 2));\n    \n    // 10. Check for submit button but DON'T click\n    const submitBtn = await widgetFrame.evaluate(() => {\n      const btns = document.querySelectorAll('button');\n      for (const b of btns) {\n        const text = b.textContent.trim().toLowerCase();\n        if (text.includes('book') || text.includes('submit') || text.includes('schedule') || text.includes('send')) {\n          return { text: b.textContent.trim(), exists: true };\n        }\n      }\n      return { exists: false };\n    });",
+      "lines": 13,
+      "secondFile": {
+        "end": 630,
+        "endLoc": {
+          "column": 9,
+          "line": 630,
+          "position": 23186
+        },
+        "name": "tour-booking-agent.js",
+        "start": 618,
+        "startLoc": {
+          "column": 97,
+          "line": 618,
+          "position": 22685
+        }
+      },
+      "tokens": 107
+    },
+    {
+      "firstFile": {
+        "end": 640,
+        "endLoc": {
+          "column": 7,
+          "line": 640,
+          "position": 23552
+        },
+        "name": "tour-booking-agent.js",
+        "start": 630,
+        "startLoc": {
+          "column": 7,
+          "line": 630,
+          "position": 23184
+        }
+      },
+      "format": "javascript",
+      "fragment": "      });\n      \n      if (tourDetails.noSubmit) {\n        console.log('[TourAgent] noSubmit=true, skipping form submission');\n        return {\n          success: true,\n          confirmationNumber: `generic-no-submit-${Date.now()}`,\n          confirmationText: 'Form filled but not submitted (noSubmit mode)',\n          bookedAt: new Date().toISOString(),\n        };\n      }",
+      "lines": 11,
+      "secondFile": {
+        "end": 722,
+        "endLoc": {
+          "column": 5,
+          "line": 722,
+          "position": 27568
+        },
+        "name": "tour-booking-agent.js",
+        "start": 711,
+        "startLoc": {
+          "column": 95,
+          "line": 711,
+          "position": 27172
+        }
+      },
+      "tokens": 50
+    },
+    {
+      "firstFile": {
+        "end": 87,
+        "endLoc": {
+          "column": 7,
+          "line": 87,
+          "position": 3044
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 71,
+        "startLoc": {
+          "column": 79,
+          "line": 71,
+          "position": 2603
+        }
+      },
+      "format": "javascript",
+      "fragment": "test('bookToursForLead returns non-mutating dry-run preview from CRM lead data', async () => {\n  const calls = [];\n  const httpClient = {\n    async get(url) {\n      calls.push({ method: 'GET', url });\n      if (url.endsWith('/api/internal/leads/91')) {\n        return {\n          data: {\n            leadId: 91,\n            firstName: 'Casey',\n            lastName: 'Walker',\n            email: 'casey@example.com',\n            phone: '+17135550123',\n            moveInDate: '2026-08-01',\n          },\n        };\n      }",
+      "lines": 17,
+      "secondFile": {
+        "end": 145,
+        "endLoc": {
+          "column": 7,
+          "line": 145,
+          "position": 5160
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 129,
+        "startLoc": {
+          "column": 85,
+          "line": 129,
+          "position": 4719
+        }
+      },
+      "tokens": 79
+    },
+    {
+      "firstFile": {
+        "end": 105,
+        "endLoc": {
+          "column": 27,
+          "line": 105,
+          "position": 3610
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 86,
+        "startLoc": {
+          "column": 8,
+          "line": 86,
+          "position": 3034
+        }
+      },
+      "format": "javascript",
+      "fragment": "        };\n      }\n      throw new Error(`unexpected GET ${url}`);\n    },\n    async post(url, body) {\n      calls.push({ method: 'POST', url, body });\n      if (url.endsWith('/api/internal/tours/create')) {\n        return { data: { tourId: calls.length, ...body } };\n      }\n      if (url.endsWith('/api/internal/leads/91/itinerary')) {\n        return { data: { leadId: 91, generated: true } };\n      }\n      throw new Error(`unexpected POST ${url}`);\n    },\n  };\n\n  const result = await bookToursForLead({\n    leadId: 91,\n    clientPreferredTime: '10:00',\n    tourDate: '2026-07-04',",
+      "lines": 20,
+      "secondFile": {
+        "end": 167,
+        "endLoc": {
+          "column": 27,
+          "line": 167,
+          "position": 5955
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 148,
+        "startLoc": {
+          "column": 67,
+          "line": 148,
+          "position": 5379
+        }
+      },
+      "tokens": 122
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-06-28T22:54:07.736Z",
+    "formats": {
+      "bash": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 88,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 61
+      },
+      "javascript": {
+        "clones": 8,
+        "duplicatedLines": 94,
+        "duplicatedTokens": 630,
+        "lines": 1910,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 4.9214659685863875,
+        "percentageTokens": 5.832793259883344,
+        "sources": 7,
+        "tokens": 10801
+      },
+      "json": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 1598,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 3,
+        "tokens": 4662
+      },
+      "markdown": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 297,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 672
+      },
+      "markup": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 83,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 220
+      },
+      "text": {
+        "clones": 0,
+        "duplicatedLines": 0,
+        "duplicatedTokens": 0,
+        "lines": 266,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 0.0,
+        "percentageTokens": 0.0,
+        "sources": 1,
+        "tokens": 238
+      }
+    },
+    "total": {
+      "clones": 8,
+      "duplicatedLines": 94,
+      "duplicatedTokens": 630,
+      "lines": 4242,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 2.215935879302216,
+      "percentageTokens": 3.782874984988591,
+      "sources": 14,
+      "tokens": 16654
+    }
+  }
+}

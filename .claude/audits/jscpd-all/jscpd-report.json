@@ -1,0 +1,825 @@
+{
+  "duplicates": [
+    {
+      "firstFile": {
+        "end": 13,
+        "endLoc": {
+          "column": 38,
+          "line": 13,
+          "position": 457
+        },
+        "name": "inspect-form.js",
+        "start": 7,
+        "startLoc": {
+          "column": 2,
+          "line": 7,
+          "position": 191
+        }
+      },
+      "format": "javascript",
+      "fragment": "  await page.goto('https://coopsummerstreet.com/', { waitUntil: 'domcontentloaded', timeout: 20000 });\n  await page.waitForTimeout(3000);\n  \n  // Close lightbox\n  await page.keyboard.press('Escape');\n  await page.evaluate(() => {\n    const lb = document.querySelector('#screen-modular-lightbox, .lightbox-slug-special');",
+      "lines": 7,
+      "secondFile": {
+        "end": 16,
+        "endLoc": {
+          "column": 40,
+          "line": 16,
+          "position": 595
+        },
+        "name": "test-form-fill.js",
+        "start": 10,
+        "startLoc": {
+          "column": 4,
+          "line": 10,
+          "position": 300
+        }
+      },
+      "tokens": 52
+    },
+    {
+      "firstFile": {
+        "end": 20,
+        "endLoc": {
+          "column": 47,
+          "line": 20,
+          "position": 721
+        },
+        "name": "inspect-form.js",
+        "start": 13,
+        "startLoc": {
+          "column": 88,
+          "line": 13,
+          "position": 507
+        }
+      },
+      "format": "javascript",
+      "fragment": "    const lb = document.querySelector('#screen-modular-lightbox, .lightbox-slug-special');\n    if (lb) lb.style.display = 'none';\n  });\n  await page.waitForTimeout(500);\n  \n  // Click Schedule\n  const btn = page.locator('a:has-text(\"Schedule\")').first();\n  if (await btn.isVisible().catch(() => false)) await btn.click();",
+      "lines": 8,
+      "secondFile": {
+        "end": 23,
+        "endLoc": {
+          "column": 49,
+          "line": 23,
+          "position": 868
+        },
+        "name": "test-form-fill.js",
+        "start": 16,
+        "startLoc": {
+          "column": 66,
+          "line": 16,
+          "position": 621
+        }
+      },
+      "tokens": 56
+    },
+    {
+      "firstFile": {
+        "end": 19,
+        "endLoc": {
+          "column": 18,
+          "line": 19,
+          "position": 704
+        },
+        "name": "test-coopsummerstreet.js",
+        "start": 4,
+        "startLoc": {
+          "column": 72,
+          "line": 4,
+          "position": 155
+        }
+      },
+      "format": "javascript",
+      "fragment": "  console.log('[Test] Starting standalone test for coopsummerstreet.com');\n\n  const browser = await playwright.chromium.launch({ headless: true });\n  const context = await browser.newContext({\n    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',\n    viewport: { width: 1920, height: 1080 },\n  });\n  const page = await context.newPage();\n  page.setDefaultTimeout(20000);\n\n  // Hide navigator.webdriver\n  await page.addInitScript(() => {\n    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });\n  });\n\n  const debugDir = '/Users/ej/Documents/ejwork/LeadInfo/BookingScreenshots/phase3-test';",
+      "lines": 16,
+      "secondFile": {
+        "end": 18,
+        "endLoc": {
+          "column": 18,
+          "line": 18,
+          "position": 685
+        },
+        "name": "test-full-flow-no-submit.js",
+        "start": 4,
+        "startLoc": {
+          "column": 84,
+          "line": 4,
+          "position": 166
+        }
+      },
+      "tokens": 97
+    },
+    {
+      "firstFile": {
+        "end": 157,
+        "endLoc": {
+          "column": 1,
+          "line": 157,
+          "position": 6480
+        },
+        "name": "test-coopsummerstreet.js",
+        "start": 148,
+        "startLoc": {
+          "column": 61,
+          "line": 148,
+          "position": 6232
+        }
+      },
+      "format": "javascript",
+      "fragment": "    console.log('[Test] Test complete. Screenshots saved to:', debugDir);\n\n  } catch (err) {\n    console.error('[Test] Error:', err.message);\n    await page.screenshot({ path: `${debugDir}/error.png`, fullPage: true }).catch(() => {});\n  } finally {\n    await context.close();\n    await browser.close();\n  }\n}",
+      "lines": 10,
+      "secondFile": {
+        "end": 149,
+        "endLoc": {
+          "column": 1,
+          "line": 149,
+          "position": 6094
+        },
+        "name": "test-full-flow-no-submit.js",
+        "start": 140,
+        "startLoc": {
+          "column": 46,
+          "line": 140,
+          "position": 5846
+        }
+      },
+      "tokens": 67
+    },
+    {
+      "firstFile": {
+        "end": 104,
+        "endLoc": {
+          "column": 7,
+          "line": 104,
+          "position": 3749
+        },
+        "name": "test-form-fill.js",
+        "start": 92,
+        "startLoc": {
+          "column": 63,
+          "line": 92,
+          "position": 3252
+        }
+      },
+      "format": "javascript",
+      "fragment": "    console.log('Form values:', JSON.stringify(values, null, 2));\n    \n    // 10. Check for submit button but DON'T click\n    const submitBtn = await widgetFrame.evaluate(() => {\n      const btns = document.querySelectorAll('button');\n      for (const b of btns) {\n        const text = b.textContent.trim().toLowerCase();\n        if (text.includes('book') || text.includes('submit') || text.includes('schedule') || text.includes('send')) {\n          return { text: b.textContent.trim(), exists: true };\n        }\n      }\n      return { exists: false };\n    });",
+      "lines": 13,
+      "secondFile": {
+        "end": 630,
+        "endLoc": {
+          "column": 9,
+          "line": 630,
+          "position": 23186
+        },
+        "name": "tour-booking-agent.js",
+        "start": 618,
+        "startLoc": {
+          "column": 97,
+          "line": 618,
+          "position": 22685
+        }
+      },
+      "tokens": 107
+    },
+    {
+      "firstFile": {
+        "end": 71,
+        "endLoc": {
+          "column": 1,
+          "line": 71,
+          "position": 2275
+        },
+        "name": "tour-booking-agent.js",
+        "start": 11,
+        "startLoc": {
+          "column": 27,
+          "line": 11,
+          "position": 317
+        }
+      },
+      "format": "javascript",
+      "fragment": "const path = require('path');\nconst axios = require('axios');\n\nconst CRM_BASE_URL = process.env.CRM_BASE_URL || 'http://localhost:3000';\nconst CRM_API_KEY = process.env.CRM_API_KEY || '';\nconst DEFAULT_TIMEZONE = process.env.TOUR_TIMEZONE || 'America/Chicago';\n\nfunction crmHeaders() {\n  return CRM_API_KEY ? { Authorization: `Bearer ${CRM_API_KEY}` } : {};\n}\n\nfunction normalizeLeadId(value) {\n  const numeric = Number(value);\n  return Number.isInteger(numeric) && numeric > 0 ? numeric : null;\n}\n\nfunction isHHMM(value) {\n  return typeof value === 'string' && /^([01]\\d|2[0-3]):[0-5]\\d$/.test(value.trim());\n}\n\nfunction isIsoDate(value) {\n  return typeof value === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(value.trim());\n}\n\nfunction todayIsoDate() {\n  return new Date().toISOString().slice(0, 10);\n}\n\nfunction safeString(value) {\n  return typeof value === 'string' ? value.trim() : '';\n}\n\nfunction normalizeProperty(property, index) {\n  if (!property || typeof property !== 'object') {\n    return { error: `properties[${index}] must be an object` };\n  }\n\n  const name = safeString(property.name || property.propertyName);\n  if (!name) return { error: `properties[${index}].name is required` };\n\n  const website = safeString(property.website || property.url || property.bookingUrl);\n  const rawPropertyId = property.id ?? property.propertyId ?? null;\n  let propertyId = null;\n  if (rawPropertyId != null && rawPropertyId !== '') {\n    propertyId = Number(rawPropertyId);\n    if (!Number.isInteger(propertyId) || propertyId <= 0) {\n      return { error: `properties[${index}].id must be a positive integer when provided` };\n    }\n  }\n\n  return {\n    property: {\n      id: propertyId,\n      name,\n      website: website || null,\n      address: safeString(property.address || property.propertyAddress) || null,\n      contactEmail: safeString(property.contactEmail || property.propertyContactEmail) || null,\n      bookingPlatform: safeString(property.bookingPlatform) || null,\n    },\n  };\n}",
+      "lines": 61,
+      "secondFile": {
+        "end": 69,
+        "endLoc": {
+          "column": 1,
+          "line": 69,
+          "position": 2219
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 9,
+        "startLoc": {
+          "column": 39,
+          "line": 9,
+          "position": 261
+        }
+      },
+      "tokens": 386
+    },
+    {
+      "firstFile": {
+        "end": 545,
+        "endLoc": {
+          "column": 14,
+          "line": 545,
+          "position": 19530
+        },
+        "name": "tour-booking-agent.js",
+        "start": 14,
+        "startLoc": {
+          "column": 72,
+          "line": 14,
+          "position": 425
+        }
+      },
+      "format": "javascript",
+      "fragment": "const CRM_BASE_URL = process.env.CRM_BASE_URL || 'http://localhost:3000';\nconst CRM_API_KEY = process.env.CRM_API_KEY || '';\nconst DEFAULT_TIMEZONE = process.env.TOUR_TIMEZONE || 'America/Chicago';\n\nfunction crmHeaders() {\n  return CRM_API_KEY ? { Authorization: `Bearer ${CRM_API_KEY}` } : {};\n}\n\nfunction normalizeLeadId(value) {\n  const numeric = Number(value);\n  return Number.isInteger(numeric) && numeric > 0 ? numeric : null;\n}\n\nfunction isHHMM(value) {\n  return typeof value === 'string' && /^([01]\\d|2[0-3]):[0-5]\\d$/.test(value.trim());\n}\n\nfunction isIsoDate(value) {\n  return typeof value === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(value.trim());\n}\n\nfunction todayIsoDate() {\n  return new Date().toISOString().slice(0, 10);\n}\n\nfunction safeString(value) {\n  return typeof value === 'string' ? value.trim() : '';\n}\n\nfunction normalizeProperty(property, index) {\n  if (!property || typeof property !== 'object') {\n    return { error: `properties[${index}] must be an object` };\n  }\n\n  const name = safeString(property.name || property.propertyName);\n  if (!name) return { error: `properties[${index}].name is required` };\n\n  const website = safeString(property.website || property.url || property.bookingUrl);\n  const rawPropertyId = property.id ?? property.propertyId ?? null;\n  let propertyId = null;\n  if (rawPropertyId != null && rawPropertyId !== '') {\n    propertyId = Number(rawPropertyId);\n    if (!Number.isInteger(propertyId) || propertyId <= 0) {\n      return { error: `properties[${index}].id must be a positive integer when provided` };\n    }\n  }\n\n  return {\n    property: {\n      id: propertyId,\n      name,\n      website: website || null,\n      address: safeString(property.address || property.propertyAddress) || null,\n      contactEmail: safeString(property.contactEmail || property.propertyContactEmail) || null,\n      bookingPlatform: safeString(property.bookingPlatform) || null,\n    },\n  };\n}\n\n// ─── Screenshot helper ───────────────────────────────────────────────────────\nconst SCREENSHOT_DIR = process.env.TOUR_SCREENSHOT_DIR || '/Users/ej/Documents/ejwork/LeadInfo/BookingScreenshots';\n\nasync function captureScreenshot(page, label, leadId, propertyName) {\n  try {\n    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');\n    const safeProperty = (propertyName || 'unknown').replace(/[^a-zA-Z0-9]/g, '_');\n    const filename = `${timestamp}_lead${leadId}_${safeProperty}_${label}.png`;\n    const dir = path.join(SCREENSHOT_DIR, String(leadId));\n    await fs.promises.mkdir(dir, { recursive: true });\n    const filepath = path.join(dir, filename);\n    await page.screenshot({ path: filepath, fullPage: false });\n    console.log(`[Screenshot] ${label}: ${filepath}`);\n    return filepath;\n  } catch (err) {\n    console.error('[Screenshot] Failed to capture:', err.message);\n    return null;\n  }\n}\n\n// ─── Pre-flight check ────────────────────────────────────────────────────────\nasync function preFlightCheck(property, httpClient = axios) {\n  const errors = [];\n  if (!property.website || typeof property.website !== 'string') {\n    return { ok: false, errors: ['No website URL provided'], website: null };\n  }\n  if (!property.website.startsWith('http')) {\n    return { ok: false, errors: ['Website URL must start with http:// or https://'], website: property.website };\n  }\n  try {\n    const response = await httpClient.get(property.website, { timeout: 10000, maxRedirects: 5 });\n    if (response.status >= 400) {\n      errors.push(`Website returned HTTP ${response.status}`);\n    }\n    const html = (response.data || '').toLowerCase();\n    const hasBookingContent = /schedule|tour|book|visit|appointment|inquiry/i.test(html);\n    if (!hasBookingContent) {\n      errors.push('No booking-related content found on page');\n    }\n  } catch (err) {\n    errors.push(`Website unreachable: ${err.message}`);\n  }\n  return { ok: errors.length === 0, errors, website: property.website };\n}\n\nfunction validateBookingRequest(body) {\n  const errors = [];\n  const leadId = normalizeLeadId(body && body.leadId);\n  if (!leadId) errors.push('leadId must be a positive integer');\n\n  const clientPreferredTime = safeString(body && body.clientPreferredTime);\n  if (!isHHMM(clientPreferredTime)) errors.push('clientPreferredTime must be HH:MM in 24-hour time');\n\n  const tourDate = safeString(body && body.tourDate) || todayIsoDate();\n  if (!isIsoDate(tourDate)) errors.push('tourDate must be YYYY-MM-DD when provided');\n\n  const rawProperties = Array.isArray(body && body.properties)\n    ? body.properties\n    : Array.isArray(body && body.selectedProperties)\n      ? body.selectedProperties\n      : null;\n  const properties = [];\n  if (rawProperties) {\n    rawProperties.forEach((property, index) => {\n      const normalized = normalizeProperty(property, index);\n      if (normalized.error) errors.push(normalized.error);\n      else properties.push(normalized.property);\n    });\n  }\n\n  const useCrmTourRequests = body && body.useCrmTourRequests !== false;\n  if (!rawProperties && !useCrmTourRequests) {\n    errors.push('properties are required when useCrmTourRequests is false');\n  }\n  if (rawProperties && properties.length === 0) {\n    errors.push('properties must include at least one property');\n  }\n\n  const requestedCount = Number(body && body.requestedCount);\n  const limit = Number.isInteger(requestedCount) && requestedCount > 0\n    ? Math.min(requestedCount, 8)\n    : Math.min(properties.length || 4, 8);\n\n  return {\n    ok: errors.length === 0,\n    errors,\n    request: {\n      leadId,\n      clientPreferredTime,\n      tourDate,\n      timezone: safeString(body && body.timezone) || DEFAULT_TIMEZONE,\n      properties,\n      limit,\n      useCrmTourRequests,\n      async: body ? body.async !== false : true,\n      dryRun: !!(body && body.dryRun),\n      noSubmit: !!(body && body.noSubmit),\n    },\n  };\n}\n\nfunction calculateTourSchedule(startTime, numProperties, tourDate = todayIsoDate()) {\n  if (!isHHMM(startTime)) throw new Error('startTime must be HH:MM');\n  if (!Number.isInteger(numProperties) || numProperties < 0) throw new Error('numProperties must be a non-negative integer');\n  if (!isIsoDate(tourDate)) throw new Error('tourDate must be YYYY-MM-DD');\n\n  const schedule = [];\n  const currentTime = new Date(`${tourDate}T${startTime}:00`);\n\n  for (let i = 0; i < numProperties; i++) {\n    const hours = String(currentTime.getHours()).padStart(2, '0');\n    const minutes = String(currentTime.getMinutes()).padStart(2, '0');\n    schedule.push({\n      date: tourDate,\n      time: `${hours}:${minutes}`,\n      startsAt: `${tourDate}T${hours}:${minutes}:00`,\n    });\n    currentTime.setMinutes(currentTime.getMinutes() + 50);\n  }\n\n  return schedule;\n}\n\nfunction leadDisplayName(lead) {\n  return [lead.firstName, lead.lastName].filter(Boolean).join(' ') || lead.email || `Lead ${lead.leadId || lead.id}`;\n}\n\nasync function fetchLeadFromCRM(leadId, httpClient = axios) {\n  const response = await httpClient.get(`${CRM_BASE_URL}/api/internal/leads/${leadId}`, {\n    headers: crmHeaders(),\n  });\n  return response.data;\n}\n\nasync function fetchTourRequestProperties(leadId, limit, httpClient = axios) {\n  const response = await httpClient.get(`${CRM_BASE_URL}/api/internal/leads/${leadId}/tour-requests`, {\n    headers: crmHeaders(),\n  });\n  return response.data.slice(0, limit).map((property, index) => {\n    const normalized = normalizeProperty(property, index);\n    if (normalized.error) {\n      return {\n        id: property.propertyId ?? property.id ?? null,\n        name: property.propertyName || property.name || `Property ${index + 1}`,\n        website: null,\n        address: property.propertyAddress || property.address || null,\n        contactEmail: property.propertyContactEmail || property.contactEmail || null,\n      };\n    }\n    return normalized.property;\n  });\n}\n\nfunction buildTourDetails(lead, scheduleEntry, options = {}) {\n  return {\n    leadName: leadDisplayName(lead),\n    leadPhone: lead.phone || '',\n    leadEmail: lead.email || '',\n    moveInDate: lead.moveInDate || '',\n    date: scheduleEntry.date,\n    time: scheduleEntry.time,\n    startsAt: scheduleEntry.startsAt,\n    noSubmit: options.noSubmit || false,\n  };\n}\n\nasync function bookToursForLead(input, propertyList, clientPreferredTime, options = {}) {\n  const normalizedInput = typeof input === 'object' && input !== null\n    ? validateBookingRequest(input)\n    : validateBookingRequest({ leadId: input, properties: propertyList, clientPreferredTime });\n\n  if (!normalizedInput.ok) {\n    return {\n      success: false,\n      errors: normalizedInput.errors.map(reason => ({ reason, action: 'VALIDATION' })),\n      bookings: [],\n      message: 'Booking request failed validation',\n    };\n  }\n\n  const request = normalizedInput.request;\n  const httpClient = options.httpClient || axios;\n  const booker = options.bookPropertyTour || bookPropertyTour;\n  const launchBrowser = options.launchBrowser || (() => playwright.chromium.launch({ headless: true }));\n  const bookings = [];\n  const errors = [];\n  let browser = null;\n\n  try {\n    const lead = await fetchLeadFromCRM(request.leadId, httpClient);\n    let properties = request.properties;\n    if (properties.length === 0 && request.useCrmTourRequests) {\n      properties = await fetchTourRequestProperties(request.leadId, request.limit, httpClient);\n    }\n    properties = properties.slice(0, request.limit);\n\n    if (properties.length === 0) {\n      return {\n        success: false,\n        leadId: request.leadId,\n        bookings,\n        errors: [{ reason: 'No tour request properties available from CRM', action: 'REVIEW' }],\n        message: 'No properties available to book',\n      };\n    }\n\n    const schedule = calculateTourSchedule(request.clientPreferredTime, properties.length, request.tourDate);\n    console.log(`[TourAgent] Starting booking for lead ${request.leadId} (${leadDisplayName(lead)})`);\n    console.log(`[TourAgent] Properties: ${properties.map(p => p.name).join(', ')}`);\n\n    if (!request.dryRun) {\n      browser = await launchBrowser();\n    }\n\n    const previewBookings = [];\n\n    for (let i = 0; i < properties.length; i++) {\n      const property = properties[i];\n      const scheduleEntry = schedule[i];\n      const tourDetails = buildTourDetails(lead, scheduleEntry, { noSubmit: request.noSubmit });\n\n      if (request.dryRun) {\n        const preview = {\n          property: property.name,\n          propertyId: property.id,\n          propertyAddress: property.address,\n          time: scheduleEntry.time,\n          startsAt: scheduleEntry.startsAt,\n          tourTime: scheduleEntry.startsAt,\n          dryRun: true,\n          wouldCreateTour: !!property.website,\n          wouldGenerateItinerary: !!property.website,\n          action: property.website ? 'WOULD_BOOK' : 'MANUAL_REVIEW',\n        };\n        if (!property.website) {\n          preview.reason = 'No booking website available';\n          errors.push({\n            property: property.name,\n            propertyId: property.id,\n            reason: preview.reason,\n            action: 'MANUAL_REVIEW',\n          });\n        }\n        previewBookings.push(preview);\n        continue;\n      }\n\n      if (!property.website) {\n        errors.push({\n          property: property.name,\n          propertyId: property.id,\n          reason: 'No booking website available',\n          action: 'MANUAL_REVIEW',\n        });\n        continue;\n      }\n\n      // Pre-flight check: verify website is reachable before launching browser\n      const preFlight = await preFlightCheck(property, httpClient);\n      if (!preFlight.ok) {\n        errors.push({\n          property: property.name,\n          propertyId: property.id,\n          reason: preFlight.errors.join('; '),\n          action: 'MANUAL_REVIEW',\n        });\n        console.log(`[TourAgent] Pre-flight failed for ${property.name}: ${preFlight.errors.join('; ')}`);\n        continue;\n      }\n\n      try {\n        const booking = await booker(browser, property, tourDetails);\n        if (booking.success) {\n          bookings.push({\n            ...booking,\n            property: property.name,\n            propertyId: property.id,\n            propertyAddress: property.address,\n            time: scheduleEntry.time,\n            startsAt: scheduleEntry.startsAt,\n          });\n          console.log(`[TourAgent] Booked ${property.name} at ${scheduleEntry.startsAt}`);\n        } else {\n          errors.push({\n            property: property.name,\n            propertyId: property.id,\n            reason: booking.error,\n            action: 'MANUAL_REVIEW',\n          });\n        }\n      } catch (err) {\n        errors.push({\n          property: property.name,\n          propertyId: property.id,\n          reason: err.message,\n          action: 'MANUAL_REVIEW',\n        });\n      }\n    }\n\n    if (request.dryRun) {\n      const wouldCreateTours = previewBookings.filter(booking => booking.wouldCreateTour).length;\n      return {\n        success: errors.length === 0 && wouldCreateTours === properties.length,\n        leadId: request.leadId,\n        lead,\n        dryRun: true,\n        previewBookings,\n        wouldCreateTours,\n        wouldGenerateItinerary: wouldCreateTours > 0,\n        bookings: [],\n        errors,\n        crmResults: [],\n        itinerary: null,\n        message: `Previewed ${wouldCreateTours}/${properties.length} tours`,\n      };\n    }\n\n    const crmResults = bookings.length > 0\n      ? await storeTourBookingsInCRM(request.leadId, bookings, httpClient)\n      : [];\n\n    if (errors.length > 0) {\n      await alertEricOfFailures(request.leadId, errors, httpClient);\n    }\n\n    const itinerary = bookings.length > 0\n      ? await requestItineraryGeneration(request.leadId, request.tourDate, {\n        dryRun: request.dryRun,\n        httpClient,\n      })\n      : null;\n\n    return {\n      success: errors.length === 0 && bookings.length === properties.length,\n      leadId: request.leadId,\n      lead,\n      bookings,\n      errors,\n      crmResults,\n      itinerary,\n      message: `Booked ${bookings.length}/${properties.length} tours`,\n    };\n  } catch (err) {\n    console.error('[TourAgent] Fatal booking error:', err.message);\n    return {\n      success: false,\n      leadId: request.leadId,\n      error: err.message,\n      bookings,\n      errors,\n    };\n  } finally {\n    if (browser && typeof browser.close === 'function') {\n      await browser.close();\n    }\n  }\n}\n\nasync function bookPropertyTour(browser, property, tourDetails) {\n  // Create a fresh browser context with anti-bot measures\n  const context = await browser.newContext({\n    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',\n    viewport: { width: 1920, height: 1080 },\n  });\n\n  const page = await context.newPage();\n  page.setDefaultTimeout(15000);\n\n  // Hide navigator.webdriver to reduce bot detection\n  await page.addInitScript(() => {\n    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });\n  });\n\n  try {\n    await page.goto(property.website, { waitUntil: 'networkidle' });\n    await captureScreenshot(page, 'page_loaded', tourDetails.leadId || 'unknown', property.name);\n\n    const platformType = await detectBookingPlatform(page);\n    await captureScreenshot(page, 'platform_detected', tourDetails.leadId || 'unknown', property.name);\n\n    let booking;\n    switch (platformType) {\n      case 'appfolio':\n        booking = await bookAppfolioTour(page, property, tourDetails);\n        break;\n      case 'leaselabs':\n        booking = await bookLeaselabsTour(page, property, tourDetails);\n        break;\n      case 'generic':\n        booking = await bookGenericTour(page, property, tourDetails);\n        break;\n      default:\n        return { success: false, error: `Unknown booking platform: ${platformType}` };\n    }\n\n    // Screenshot on success or failure\n    if (booking.success) {\n      await captureScreenshot(page, 'booking_success', tourDetails.leadId || 'unknown', property.name);\n    } else {\n      await captureScreenshot(page, 'booking_error', tourDetails.leadId || 'unknown', property.name);\n    }\n\n    return { ...booking, platform: platformType };\n  } catch (err) {\n    await captureScreenshot(page, 'exception', tourDetails.leadId || 'unknown', property.name);\n    return { success: false, error: err.message };\n  } finally {\n    await page.close();\n    await context.close();\n  }\n}\n\nasync function detectBookingPlatform(page) {\n  const html = (await page.content()).toLowerCase();\n  const url = typeof page.url === 'function' ? page.url().toLowerCase() : '';\n\n  if (html.includes('appfolio') || html.includes('apartmentapp') || url.includes('appfolio')) {\n    return 'appfolio';\n  }\n  if (html.includes('leaselabs') || html.includes('leaselab') || url.includes('leaselabs')) {\n    return 'leaselabs';\n  }\n  return 'generic';\n}\n\nasync function bookAppfolioTour(page, property, tourDetails) {\n  try {\n    await page.click('button:has-text(\"Schedule Tour\"), a:has-text(\"Schedule Tour\")');\n    await page.fill('input[name=\"visitor_first_name\"], input[name=\"first_name\"]', tourDetails.leadName);\n    await page.fill('input[name=\"visitor_phone\"], input[type=\"tel\"]', tourDetails.leadPhone);\n    await page.fill('input[name=\"visitor_email\"], input[type=\"email\"]', tourDetails.leadEmail);\n\n    const timeSelector = `button[data-time=\"${tourDetails.time}\"]`;\n    if (await page.isVisible(timeSelector)) {\n      await page.click(timeSelector);\n    } else {\n      await page.click('button[data-available=\"true\"], button:has-text(\"Available\")');\n    }\n\n    await page.click('button[type=\"submit\"], button:has-text(\"Submit\")');\n    await page.waitForSelector('text=/confirmation|confirmed|booked/i', { timeout: 5000 });\n    const confirmationText = await page.textContent('.confirmation').catch(() => null);\n\n    return {\n      success: true,\n      confirmationNumber: confirmationText || `appfolio-${Date.now()}`,\n      bookedAt: new Date().toISOString(),\n    };\n  } catch (err) {\n    return { success: false, error: `Appfolio booking failed: ${err.message}` };\n  }\n}\n\nasync function bookLeaselabsTour(page, property, tourDetails) {\n  try {\n    await page.click('a:has-text(\"Schedule a Tour\"), button:has-text(\"Schedule a Tour\")');\n    await page.fill('input[id=\"first_name\"], input[name=\"firstName\"]', tourDetails.leadName);\n    await page.fill('input[id=\"phone\"], input[type=\"tel\"]', tourDetails.leadPhone);\n    await page.fill('input[id=\"email\"], input[type=\"email\"]', tourDetails.leadEmail);\n\n    const timeButton = await page.$(`button:has-text(\"${tourDetails.time}\")`);\n    if (timeButton) await timeButton.click();\n\n    await page.click('button:has-text(\"Book Tour\"), button[type=\"submit\"]');\n    await page.waitForSelector('text=/booked|confirmed|confirmation/i', { timeout: 5000 });\n\n    return {\n      success: true,\n      confirmationNumber: `leaselabs-${Date.now()}`,\n      bookedAt: new Date().toISOString(),\n    };\n  } catch (err) {",
+      "lines": 532,
+      "secondFile": {
+        "end": 548,
+        "endLoc": {
+          "column": 9,
+          "line": 548,
+          "position": 19509
+        },
+        "name": "tour-booking-agent.js.modified",
+        "start": 11,
+        "startLoc": {
+          "column": 28,
+          "line": 11,
+          "position": 318
+        }
+      },
+      "tokens": 3452
+    },
+    {
+      "firstFile": {
+        "end": 168,
+        "endLoc": {
+          "column": 38,
+          "line": 168,
+          "position": 6368
+        },
+        "name": "tour-booking-agent.js",
+        "start": 115,
+        "startLoc": {
+          "column": 70,
+          "line": 115,
+          "position": 4508
+        }
+      },
+      "format": "javascript",
+      "fragment": "  return { ok: errors.length === 0, errors, website: property.website };\n}\n\nfunction validateBookingRequest(body) {\n  const errors = [];\n  const leadId = normalizeLeadId(body && body.leadId);\n  if (!leadId) errors.push('leadId must be a positive integer');\n\n  const clientPreferredTime = safeString(body && body.clientPreferredTime);\n  if (!isHHMM(clientPreferredTime)) errors.push('clientPreferredTime must be HH:MM in 24-hour time');\n\n  const tourDate = safeString(body && body.tourDate) || todayIsoDate();\n  if (!isIsoDate(tourDate)) errors.push('tourDate must be YYYY-MM-DD when provided');\n\n  const rawProperties = Array.isArray(body && body.properties)\n    ? body.properties\n    : Array.isArray(body && body.selectedProperties)\n      ? body.selectedProperties\n      : null;\n  const properties = [];\n  if (rawProperties) {\n    rawProperties.forEach((property, index) => {\n      const normalized = normalizeProperty(property, index);\n      if (normalized.error) errors.push(normalized.error);\n      else properties.push(normalized.property);\n    });\n  }\n\n  const useCrmTourRequests = body && body.useCrmTourRequests !== false;\n  if (!rawProperties && !useCrmTourRequests) {\n    errors.push('properties are required when useCrmTourRequests is false');\n  }\n  if (rawProperties && properties.length === 0) {\n    errors.push('properties must include at least one property');\n  }\n\n  const requestedCount = Number(body && body.requestedCount);\n  const limit = Number.isInteger(requestedCount) && requestedCount > 0\n    ? Math.min(requestedCount, 8)\n    : Math.min(properties.length || 4, 8);\n\n  return {\n    ok: errors.length === 0,\n    errors,\n    request: {\n      leadId,\n      clientPreferredTime,\n      tourDate,\n      timezone: safeString(body && body.timezone) || DEFAULT_TIMEZONE,\n      properties,\n      limit,\n      useCrmTourRequests,\n      async: body ? body.async !== false : true,\n      dryRun: !!(body && body.dryRun),",
+      "lines": 54,
+      "secondFile": {
+        "end": 121,
+        "endLoc": {
+          "column": 38,
+          "line": 121,
+          "position": 4075
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 68,
+        "startLoc": {
+          "column": 2,
+          "line": 68,
+          "position": 2215
+        }
+      },
+      "tokens": 352
+    },
+    {
+      "firstFile": {
+        "end": 226,
+        "endLoc": {
+          "column": 45,
+          "line": 226,
+          "position": 8448
+        },
+        "name": "tour-booking-agent.js",
+        "start": 169,
+        "startLoc": {
+          "column": 40,
+          "line": 169,
+          "position": 6409
+        }
+      },
+      "format": "javascript",
+      "fragment": "      noSubmit: !!(body && body.noSubmit),\n    },\n  };\n}\n\nfunction calculateTourSchedule(startTime, numProperties, tourDate = todayIsoDate()) {\n  if (!isHHMM(startTime)) throw new Error('startTime must be HH:MM');\n  if (!Number.isInteger(numProperties) || numProperties < 0) throw new Error('numProperties must be a non-negative integer');\n  if (!isIsoDate(tourDate)) throw new Error('tourDate must be YYYY-MM-DD');\n\n  const schedule = [];\n  const currentTime = new Date(`${tourDate}T${startTime}:00`);\n\n  for (let i = 0; i < numProperties; i++) {\n    const hours = String(currentTime.getHours()).padStart(2, '0');\n    const minutes = String(currentTime.getMinutes()).padStart(2, '0');\n    schedule.push({\n      date: tourDate,\n      time: `${hours}:${minutes}`,\n      startsAt: `${tourDate}T${hours}:${minutes}:00`,\n    });\n    currentTime.setMinutes(currentTime.getMinutes() + 50);\n  }\n\n  return schedule;\n}\n\nfunction leadDisplayName(lead) {\n  return [lead.firstName, lead.lastName].filter(Boolean).join(' ') || lead.email || `Lead ${lead.leadId || lead.id}`;\n}\n\nasync function fetchLeadFromCRM(leadId, httpClient = axios) {\n  const response = await httpClient.get(`${CRM_BASE_URL}/api/internal/leads/${leadId}`, {\n    headers: crmHeaders(),\n  });\n  return response.data;\n}\n\nasync function fetchTourRequestProperties(leadId, limit, httpClient = axios) {\n  const response = await httpClient.get(`${CRM_BASE_URL}/api/internal/leads/${leadId}/tour-requests`, {\n    headers: crmHeaders(),\n  });\n  return response.data.slice(0, limit).map((property, index) => {\n    const normalized = normalizeProperty(property, index);\n    if (normalized.error) {\n      return {\n        id: property.propertyId ?? property.id ?? null,\n        name: property.propertyName || property.name || `Property ${index + 1}`,\n        website: null,\n        address: property.propertyAddress || property.address || null,\n        contactEmail: property.propertyContactEmail || property.contactEmail || null,\n      };\n    }\n    return normalized.property;\n  });\n}\n\nfunction buildTourDetails(lead, scheduleEntry, options = {}) {",
+      "lines": 58,
+      "secondFile": {
+        "end": 178,
+        "endLoc": {
+          "column": 45,
+          "line": 178,
+          "position": 6112
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 121,
+        "startLoc": {
+          "column": 36,
+          "line": 121,
+          "position": 4073
+        }
+      },
+      "tokens": 426
+    },
+    {
+      "firstFile": {
+        "end": 234,
+        "endLoc": {
+          "column": 37,
+          "line": 234,
+          "position": 8716
+        },
+        "name": "tour-booking-agent.js",
+        "start": 226,
+        "startLoc": {
+          "column": 59,
+          "line": 226,
+          "position": 8462
+        }
+      },
+      "format": "javascript",
+      "fragment": "function buildTourDetails(lead, scheduleEntry, options = {}) {\n  return {\n    leadName: leadDisplayName(lead),\n    leadPhone: lead.phone || '',\n    leadEmail: lead.email || '',\n    moveInDate: lead.moveInDate || '',\n    date: scheduleEntry.date,\n    time: scheduleEntry.time,\n    startsAt: scheduleEntry.startsAt,",
+      "lines": 9,
+      "secondFile": {
+        "end": 186,
+        "endLoc": {
+          "column": 37,
+          "line": 186,
+          "position": 6366
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 178,
+        "startLoc": {
+          "column": 45,
+          "line": 178,
+          "position": 6112
+        }
+      },
+      "tokens": 53
+    },
+    {
+      "firstFile": {
+        "end": 292,
+        "endLoc": {
+          "column": 62,
+          "line": 292,
+          "position": 10848
+        },
+        "name": "tour-booking-agent.js",
+        "start": 235,
+        "startLoc": {
+          "column": 39,
+          "line": 235,
+          "position": 8756
+        }
+      },
+      "format": "javascript",
+      "fragment": "    noSubmit: options.noSubmit || false,\n  };\n}\n\nasync function bookToursForLead(input, propertyList, clientPreferredTime, options = {}) {\n  const normalizedInput = typeof input === 'object' && input !== null\n    ? validateBookingRequest(input)\n    : validateBookingRequest({ leadId: input, properties: propertyList, clientPreferredTime });\n\n  if (!normalizedInput.ok) {\n    return {\n      success: false,\n      errors: normalizedInput.errors.map(reason => ({ reason, action: 'VALIDATION' })),\n      bookings: [],\n      message: 'Booking request failed validation',\n    };\n  }\n\n  const request = normalizedInput.request;\n  const httpClient = options.httpClient || axios;\n  const booker = options.bookPropertyTour || bookPropertyTour;\n  const launchBrowser = options.launchBrowser || (() => playwright.chromium.launch({ headless: true }));\n  const bookings = [];\n  const errors = [];\n  let browser = null;\n\n  try {\n    const lead = await fetchLeadFromCRM(request.leadId, httpClient);\n    let properties = request.properties;\n    if (properties.length === 0 && request.useCrmTourRequests) {\n      properties = await fetchTourRequestProperties(request.leadId, request.limit, httpClient);\n    }\n    properties = properties.slice(0, request.limit);\n\n    if (properties.length === 0) {\n      return {\n        success: false,\n        leadId: request.leadId,\n        bookings,\n        errors: [{ reason: 'No tour request properties available from CRM', action: 'REVIEW' }],\n        message: 'No properties available to book',\n      };\n    }\n\n    const schedule = calculateTourSchedule(request.clientPreferredTime, properties.length, request.tourDate);\n    console.log(`[TourAgent] Starting booking for lead ${request.leadId} (${leadDisplayName(lead)})`);\n    console.log(`[TourAgent] Properties: ${properties.map(p => p.name).join(', ')}`);\n\n    if (!request.dryRun) {\n      browser = await launchBrowser();\n    }\n\n    const previewBookings = [];\n\n    for (let i = 0; i < properties.length; i++) {\n      const property = properties[i];\n      const scheduleEntry = schedule[i];\n      const tourDetails = buildTourDetails(lead, scheduleEntry, { noSubmit: request.noSubmit });",
+      "lines": 58,
+      "secondFile": {
+        "end": 243,
+        "endLoc": {
+          "column": 62,
+          "line": 243,
+          "position": 8457
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 186,
+        "startLoc": {
+          "column": 36,
+          "line": 186,
+          "position": 6365
+        }
+      },
+      "tokens": 395
+    },
+    {
+      "firstFile": {
+        "end": 328,
+        "endLoc": {
+          "column": 7,
+          "line": 328,
+          "position": 11980
+        },
+        "name": "tour-booking-agent.js",
+        "start": 292,
+        "startLoc": {
+          "column": 94,
+          "line": 292,
+          "position": 10880
+        }
+      },
+      "format": "javascript",
+      "fragment": "      const tourDetails = buildTourDetails(lead, scheduleEntry, { noSubmit: request.noSubmit });\n\n      if (request.dryRun) {\n        const preview = {\n          property: property.name,\n          propertyId: property.id,\n          propertyAddress: property.address,\n          time: scheduleEntry.time,\n          startsAt: scheduleEntry.startsAt,\n          tourTime: scheduleEntry.startsAt,\n          dryRun: true,\n          wouldCreateTour: !!property.website,\n          wouldGenerateItinerary: !!property.website,\n          action: property.website ? 'WOULD_BOOK' : 'MANUAL_REVIEW',\n        };\n        if (!property.website) {\n          preview.reason = 'No booking website available';\n          errors.push({\n            property: property.name,\n            propertyId: property.id,\n            reason: preview.reason,\n            action: 'MANUAL_REVIEW',\n          });\n        }\n        previewBookings.push(preview);\n        continue;\n      }\n\n      if (!property.website) {\n        errors.push({\n          property: property.name,\n          propertyId: property.id,\n          reason: 'No booking website available',\n          action: 'MANUAL_REVIEW',\n        });\n        continue;\n      }",
+      "lines": 37,
+      "secondFile": {
+        "end": 279,
+        "endLoc": {
+          "column": 7,
+          "line": 279,
+          "position": 9557
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 243,
+        "startLoc": {
+          "column": 62,
+          "line": 243,
+          "position": 8457
+        }
+      },
+      "tokens": 175
+    },
+    {
+      "firstFile": {
+        "end": 434,
+        "endLoc": {
+          "column": 7,
+          "line": 434,
+          "position": 15106
+        },
+        "name": "tour-booking-agent.js",
+        "start": 339,
+        "startLoc": {
+          "column": 104,
+          "line": 339,
+          "position": 12447
+        }
+      },
+      "format": "javascript",
+      "fragment": "        console.log(`[TourAgent] Pre-flight failed for ${property.name}: ${preFlight.errors.join('; ')}`);\n        continue;\n      }\n\n      try {\n        const booking = await booker(browser, property, tourDetails);\n        if (booking.success) {\n          bookings.push({\n            ...booking,\n            property: property.name,\n            propertyId: property.id,\n            propertyAddress: property.address,\n            time: scheduleEntry.time,\n            startsAt: scheduleEntry.startsAt,\n          });\n          console.log(`[TourAgent] Booked ${property.name} at ${scheduleEntry.startsAt}`);\n        } else {\n          errors.push({\n            property: property.name,\n            propertyId: property.id,\n            reason: booking.error,\n            action: 'MANUAL_REVIEW',\n          });\n        }\n      } catch (err) {\n        errors.push({\n          property: property.name,\n          propertyId: property.id,\n          reason: err.message,\n          action: 'MANUAL_REVIEW',\n        });\n      }\n    }\n\n    if (request.dryRun) {\n      const wouldCreateTours = previewBookings.filter(booking => booking.wouldCreateTour).length;\n      return {\n        success: errors.length === 0 && wouldCreateTours === properties.length,\n        leadId: request.leadId,\n        lead,\n        dryRun: true,\n        previewBookings,\n        wouldCreateTours,\n        wouldGenerateItinerary: wouldCreateTours > 0,\n        bookings: [],\n        errors,\n        crmResults: [],\n        itinerary: null,\n        message: `Previewed ${wouldCreateTours}/${properties.length} tours`,\n      };\n    }\n\n    const crmResults = bookings.length > 0\n      ? await storeTourBookingsInCRM(request.leadId, bookings, httpClient)\n      : [];\n\n    if (errors.length > 0) {\n      await alertEricOfFailures(request.leadId, errors, httpClient);\n    }\n\n    const itinerary = bookings.length > 0\n      ? await requestItineraryGeneration(request.leadId, request.tourDate, {\n        dryRun: request.dryRun,\n        httpClient,\n      })\n      : null;\n\n    return {\n      success: errors.length === 0 && bookings.length === properties.length,\n      leadId: request.leadId,\n      lead,\n      bookings,\n      errors,\n      crmResults,\n      itinerary,\n      message: `Booked ${bookings.length}/${properties.length} tours`,\n    };\n  } catch (err) {\n    console.error('[TourAgent] Fatal booking error:', err.message);\n    return {\n      success: false,\n      leadId: request.leadId,\n      error: err.message,\n      bookings,\n      errors,\n    };\n  } finally {\n    if (browser && typeof browser.close === 'function') {\n      await browser.close();\n    }\n  }\n}\n\nasync function bookPropertyTour(browser, property, tourDetails) {\n  // Create a fresh browser context with anti-bot measures\n  const context = await browser.newContext({",
+      "lines": 96,
+      "secondFile": {
+        "end": 371,
+        "endLoc": {
+          "column": 7,
+          "line": 371,
+          "position": 12129
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 277,
+        "startLoc": {
+          "column": 9,
+          "line": 277,
+          "position": 9529
+        }
+      },
+      "tokens": 451
+    },
+    {
+      "firstFile": {
+        "end": 467,
+        "endLoc": {
+          "column": 5,
+          "line": 467,
+          "position": 16399
+        },
+        "name": "tour-booking-agent.js",
+        "start": 452,
+        "startLoc": {
+          "column": 101,
+          "line": 452,
+          "position": 15916
+        }
+      },
+      "format": "javascript",
+      "fragment": "    await captureScreenshot(page, 'platform_detected', tourDetails.leadId || 'unknown', property.name);\n\n    let booking;\n    switch (platformType) {\n      case 'appfolio':\n        booking = await bookAppfolioTour(page, property, tourDetails);\n        break;\n      case 'leaselabs':\n        booking = await bookLeaselabsTour(page, property, tourDetails);\n        break;\n      case 'generic':\n        booking = await bookGenericTour(page, property, tourDetails);\n        break;\n      default:\n        return { success: false, error: `Unknown booking platform: ${platformType}` };\n    }",
+      "lines": 16,
+      "secondFile": {
+        "end": 390,
+        "endLoc": {
+          "column": 5,
+          "line": 390,
+          "position": 12812
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 376,
+        "startLoc": {
+          "column": 57,
+          "line": 376,
+          "position": 12330
+        }
+      },
+      "tokens": 77
+    },
+    {
+      "firstFile": {
+        "end": 551,
+        "endLoc": {
+          "column": 7,
+          "line": 551,
+          "position": 19692
+        },
+        "name": "tour-booking-agent.js",
+        "start": 482,
+        "startLoc": {
+          "column": 17,
+          "line": 482,
+          "position": 16965
+        }
+      },
+      "format": "javascript",
+      "fragment": "    await context.close();\n  }\n}\n\nasync function detectBookingPlatform(page) {\n  const html = (await page.content()).toLowerCase();\n  const url = typeof page.url === 'function' ? page.url().toLowerCase() : '';\n\n  if (html.includes('appfolio') || html.includes('apartmentapp') || url.includes('appfolio')) {\n    return 'appfolio';\n  }\n  if (html.includes('leaselabs') || html.includes('leaselab') || url.includes('leaselabs')) {\n    return 'leaselabs';\n  }\n  return 'generic';\n}\n\nasync function bookAppfolioTour(page, property, tourDetails) {\n  try {\n    await page.click('button:has-text(\"Schedule Tour\"), a:has-text(\"Schedule Tour\")');\n    await page.fill('input[name=\"visitor_first_name\"], input[name=\"first_name\"]', tourDetails.leadName);\n    await page.fill('input[name=\"visitor_phone\"], input[type=\"tel\"]', tourDetails.leadPhone);\n    await page.fill('input[name=\"visitor_email\"], input[type=\"email\"]', tourDetails.leadEmail);\n\n    const timeSelector = `button[data-time=\"${tourDetails.time}\"]`;\n    if (await page.isVisible(timeSelector)) {\n      await page.click(timeSelector);\n    } else {\n      await page.click('button[data-available=\"true\"], button:has-text(\"Available\")');\n    }\n\n    await page.click('button[type=\"submit\"], button:has-text(\"Submit\")');\n    await page.waitForSelector('text=/confirmation|confirmed|booked/i', { timeout: 5000 });\n    const confirmationText = await page.textContent('.confirmation').catch(() => null);\n\n    return {\n      success: true,\n      confirmationNumber: confirmationText || `appfolio-${Date.now()}`,\n      bookedAt: new Date().toISOString(),\n    };\n  } catch (err) {\n    return { success: false, error: `Appfolio booking failed: ${err.message}` };\n  }\n}\n\nasync function bookLeaselabsTour(page, property, tourDetails) {\n  try {\n    await page.click('a:has-text(\"Schedule a Tour\"), button:has-text(\"Schedule a Tour\")');\n    await page.fill('input[id=\"first_name\"], input[name=\"firstName\"]', tourDetails.leadName);\n    await page.fill('input[id=\"phone\"], input[type=\"tel\"]', tourDetails.leadPhone);\n    await page.fill('input[id=\"email\"], input[type=\"email\"]', tourDetails.leadEmail);\n\n    const timeButton = await page.$(`button:has-text(\"${tourDetails.time}\")`);\n    if (timeButton) await timeButton.click();\n\n    await page.click('button:has-text(\"Book Tour\"), button[type=\"submit\"]');\n    await page.waitForSelector('text=/booked|confirmed|confirmation/i', { timeout: 5000 });\n\n    return {\n      success: true,\n      confirmationNumber: `leaselabs-${Date.now()}`,\n      bookedAt: new Date().toISOString(),\n    };\n  } catch (err) {\n    return { success: false, error: `LeaseLabs booking failed: ${err.message}` };\n  }\n}\n\nasync function bookGenericTour(page, property, tourDetails) {\n  try {",
+      "lines": 70,
+      "secondFile": {
+        "end": 464,
+        "endLoc": {
+          "column": 7,
+          "line": 464,
+          "position": 15688
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 395,
+        "startLoc": {
+          "column": 14,
+          "line": 395,
+          "position": 12961
+        }
+      },
+      "tokens": 474
+    },
+    {
+      "firstFile": {
+        "end": 589,
+        "endLoc": {
+          "column": 5,
+          "line": 589,
+          "position": 21005
+        },
+        "name": "tour-booking-agent.js",
+        "start": 571,
+        "startLoc": {
+          "column": 4,
+          "line": 571,
+          "position": 20445
+        }
+      },
+      "format": "javascript",
+      "fragment": "    const buttonSelectors = [\n      'button:has-text(\"Schedule Tour\")',\n      'button:has-text(\"Schedule\")',\n      'button:has-text(\"Tour\")',\n      'a:has-text(\"Book\")',\n      'a:has-text(\"Schedule\")',\n    ];\n    let clicked = false;\n    for (const selector of buttonSelectors) {\n      const btn = page.locator(selector).first();\n      if (await btn.isVisible().catch(() => false)) {\n        await btn.click();\n        clicked = true;\n        break;\n      }\n    }\n    if (!clicked) {\n      return { success: false, error: 'No booking button found on page' };\n    }",
+      "lines": 19,
+      "secondFile": {
+        "end": 566,
+        "endLoc": {
+          "column": 5,
+          "line": 566,
+          "position": 20064
+        },
+        "name": "tour-booking-agent.js.modified",
+        "start": 548,
+        "startLoc": {
+          "column": 4,
+          "line": 548,
+          "position": 19504
+        }
+      },
+      "tokens": 94
+    },
+    {
+      "firstFile": {
+        "end": 640,
+        "endLoc": {
+          "column": 7,
+          "line": 640,
+          "position": 23552
+        },
+        "name": "tour-booking-agent.js",
+        "start": 630,
+        "startLoc": {
+          "column": 7,
+          "line": 630,
+          "position": 23184
+        }
+      },
+      "format": "javascript",
+      "fragment": "      });\n      \n      if (tourDetails.noSubmit) {\n        console.log('[TourAgent] noSubmit=true, skipping form submission');\n        return {\n          success: true,\n          confirmationNumber: `generic-no-submit-${Date.now()}`,\n          confirmationText: 'Form filled but not submitted (noSubmit mode)',\n          bookedAt: new Date().toISOString(),\n        };\n      }",
+      "lines": 11,
+      "secondFile": {
+        "end": 722,
+        "endLoc": {
+          "column": 5,
+          "line": 722,
+          "position": 27568
+        },
+        "name": "tour-booking-agent.js",
+        "start": 711,
+        "startLoc": {
+          "column": 95,
+          "line": 711,
+          "position": 27172
+        }
+      },
+      "tokens": 50
+    },
+    {
+      "firstFile": {
+        "end": 730,
+        "endLoc": {
+          "column": 5,
+          "line": 730,
+          "position": 27994
+        },
+        "name": "tour-booking-agent.js",
+        "start": 724,
+        "startLoc": {
+          "column": 166,
+          "line": 724,
+          "position": 27736
+        }
+      },
+      "format": "javascript",
+      "fragment": "    const submitBtn = page.locator('button[type=\"submit\"], input[type=\"submit\"], button:has-text(\"Book tour\"), button:has-text(\"Submit\"), button:has-text(\"Schedule\")').first();\n    if (await submitBtn.isVisible().catch(() => false)) {\n      await submitBtn.click();\n    } else {\n      const form = page.locator('form').first();\n      if (await form.isVisible().catch(() => false)) await form.evaluate(f => f.submit());\n    }",
+      "lines": 7,
+      "secondFile": {
+        "end": 584,
+        "endLoc": {
+          "column": 5,
+          "line": 584,
+          "position": 21151
+        },
+        "name": "tour-booking-agent.js.modified",
+        "start": 578,
+        "startLoc": {
+          "column": 80,
+          "line": 578,
+          "position": 20893
+        }
+      },
+      "tokens": 80
+    },
+    {
+      "firstFile": {
+        "end": 891,
+        "endLoc": {
+          "column": 2,
+          "line": 891,
+          "position": 33215
+        },
+        "name": "tour-booking-agent.js",
+        "start": 736,
+        "startLoc": {
+          "column": 4,
+          "line": 736,
+          "position": 28216
+        }
+      },
+      "format": "javascript",
+      "fragment": "    const confirmationSelectors = [\n      'text=/confirmation|confirmed|booked|thank you|success|submitted/i',\n      'text=/tour scheduled|tour booked|request submitted|we will contact you/i',\n    ];\n    let confirmationText = null;\n    for (const selector of confirmationSelectors) {\n      try {\n        await page.waitForSelector(selector, { timeout: 5000 });\n        confirmationText = await page.textContent(selector).catch(() => null);\n        if (confirmationText) break;\n      } catch { /* try next selector */ }\n    }\n\n    if (!confirmationText) {\n      return { success: false, error: 'No confirmation text found after form submission' };\n    }\n\n    return {\n      success: true,\n      confirmationNumber: `generic-${Date.now()}`,\n      confirmationText,\n      bookedAt: new Date().toISOString(),\n    };\n  } catch (err) {\n    return { success: false, error: `Generic booking failed: ${err.message}` };\n  }\n}\n\nasync function storeTourBookingsInCRM(leadId, bookings, httpClient = axios) {\n  const results = [];\n  for (const booking of bookings) {\n    const payload = {\n      leadId,\n      propertyId: booking.propertyId,\n      propertyName: booking.property,\n      propertyAddress: booking.propertyAddress || null,\n      tourTime: booking.startsAt || `${todayIsoDate()}T${booking.time}:00`,\n      requestedDate: (booking.startsAt || '').slice(0, 10) || null,\n      confirmationNumber: booking.confirmationNumber,\n      status: 'confirmed',\n      source: booking.dryRun ? 'tour_booking_agent_dry_run' : 'tour_booking_agent',\n      bookingMetadata: {\n        bookedAt: booking.bookedAt,\n        platform: booking.platform || null,\n        dryRun: !!booking.dryRun,\n      },\n    };\n    const response = await httpClient.post(`${CRM_BASE_URL}/api/internal/tours/create`, payload, {\n      headers: crmHeaders(),\n    });\n    results.push(response.data);\n  }\n  return results;\n}\n\nasync function alertEricOfFailures(leadId, errors, httpClient = axios) {\n  try {\n    const response = await httpClient.post(`${CRM_BASE_URL}/api/internal/alerts/booking-failures`, {\n      leadId,\n      errors,\n      source: 'tour_booking_agent',\n    }, {\n      headers: crmHeaders(),\n    });\n    return response.data;\n  } catch (err) {\n    console.error('[TourAgent] Failed to send booking failure alert:', err.message);\n    return null;\n  }\n}\n\nasync function requestItineraryGeneration(leadId, date, options = {}) {\n  const httpClient = options.httpClient || axios;\n  try {\n    const response = await httpClient.post(`${CRM_BASE_URL}/api/internal/leads/${leadId}/itinerary`, {\n      date,\n      includeBackupProperties: true,\n      sendDelivery: options.dryRun ? false : true,\n      source: options.dryRun ? 'tour_booking_agent_dry_run' : 'tour_booking_agent',\n    }, {\n      headers: crmHeaders(),\n    });\n    return response.data;\n  } catch (err) {\n    console.error('[TourAgent] Itinerary generation request failed:', err.message);\n    return {\n      generated: false,\n      reason: err.response && err.response.data ? err.response.data.error : err.message,\n    };\n  }\n}\n\nfunction createApp() {\n  const app = express();\n  app.use(express.json({ limit: '1mb' }));\n\n  app.post('/api/book-tours', async (req, res) => {\n    const validation = validateBookingRequest(req.body || {});\n    if (!validation.ok) {\n      return res.status(400).json({ error: 'Invalid booking request', details: validation.errors });\n    }\n\n    const runBooking = () => bookToursForLead(req.body);\n    const logResult = result => console.log('[TourAgent] Booking result:', JSON.stringify({\n        leadId: result.leadId,\n        success: result.success,\n        bookings: result.bookings ? result.bookings.length : 0,\n        errors: result.errors ? result.errors.length : 0,\n      }));\n\n    if (validation.request.async) {\n      runBooking().then(logResult).catch(err => console.error('[TourAgent] Booking error:', err));\n      return res.status(202).json({\n        status: 'booking_started',\n        leadId: validation.request.leadId,\n        tourDate: validation.request.tourDate,\n        message: 'Tour booking agent started. Results will be written to CRM.',\n      });\n    }\n\n    const result = await runBooking();\n    logResult(result);\n    return res.status(result && result.success ? 200 : 207).json(result);\n  });\n\n  app.get('/health', (req, res) => {\n    res.json({ status: 'ok', service: 'tour-booking-agent', crmBaseUrl: CRM_BASE_URL });\n  });\n\n  return app;\n}\n\nfunction startServer(port = process.env.PORT || 3001) {\n  const app = createApp();\n  return app.listen(port, () => {\n    console.log(`[TourAgent] running on http://localhost:${port}`);\n    console.log(`[TourAgent] endpoint: POST http://localhost:${port}/api/book-tours`);\n  });\n}\n\nif (require.main === module) {\n  startServer();\n}\n\nmodule.exports = {\n  bookToursForLead,\n  calculateTourSchedule,\n  createApp,\n  detectBookingPlatform,\n  normalizeProperty,\n  startServer,\n  validateBookingRequest,\n  // Export new helpers for testing\n  captureScreenshot,\n  preFlightCheck,\n};",
+      "lines": 156,
+      "secondFile": {
+        "end": 742,
+        "endLoc": {
+          "column": 2,
+          "line": 742,
+          "position": 26199
+        },
+        "name": "tour-booking-agent.js.modified",
+        "start": 587,
+        "startLoc": {
+          "column": 4,
+          "line": 587,
+          "position": 21200
+        }
+      },
+      "tokens": 924
+    },
+    {
+      "firstFile": {
+        "end": 887,
+        "endLoc": {
+          "column": 25,
+          "line": 887,
+          "position": 33137
+        },
+        "name": "tour-booking-agent.js",
+        "start": 756,
+        "startLoc": {
+          "column": 22,
+          "line": 756,
+          "position": 28974
+        }
+      },
+      "format": "javascript",
+      "fragment": "      confirmationText,\n      bookedAt: new Date().toISOString(),\n    };\n  } catch (err) {\n    return { success: false, error: `Generic booking failed: ${err.message}` };\n  }\n}\n\nasync function storeTourBookingsInCRM(leadId, bookings, httpClient = axios) {\n  const results = [];\n  for (const booking of bookings) {\n    const payload = {\n      leadId,\n      propertyId: booking.propertyId,\n      propertyName: booking.property,\n      propertyAddress: booking.propertyAddress || null,\n      tourTime: booking.startsAt || `${todayIsoDate()}T${booking.time}:00`,\n      requestedDate: (booking.startsAt || '').slice(0, 10) || null,\n      confirmationNumber: booking.confirmationNumber,\n      status: 'confirmed',\n      source: booking.dryRun ? 'tour_booking_agent_dry_run' : 'tour_booking_agent',\n      bookingMetadata: {\n        bookedAt: booking.bookedAt,\n        platform: booking.platform || null,\n        dryRun: !!booking.dryRun,\n      },\n    };\n    const response = await httpClient.post(`${CRM_BASE_URL}/api/internal/tours/create`, payload, {\n      headers: crmHeaders(),\n    });\n    results.push(response.data);\n  }\n  return results;\n}\n\nasync function alertEricOfFailures(leadId, errors, httpClient = axios) {\n  try {\n    const response = await httpClient.post(`${CRM_BASE_URL}/api/internal/alerts/booking-failures`, {\n      leadId,\n      errors,\n      source: 'tour_booking_agent',\n    }, {\n      headers: crmHeaders(),\n    });\n    return response.data;\n  } catch (err) {\n    console.error('[TourAgent] Failed to send booking failure alert:', err.message);\n    return null;\n  }\n}\n\nasync function requestItineraryGeneration(leadId, date, options = {}) {\n  const httpClient = options.httpClient || axios;\n  try {\n    const response = await httpClient.post(`${CRM_BASE_URL}/api/internal/leads/${leadId}/itinerary`, {\n      date,\n      includeBackupProperties: true,\n      sendDelivery: options.dryRun ? false : true,\n      source: options.dryRun ? 'tour_booking_agent_dry_run' : 'tour_booking_agent',\n    }, {\n      headers: crmHeaders(),\n    });\n    return response.data;\n  } catch (err) {\n    console.error('[TourAgent] Itinerary generation request failed:', err.message);\n    return {\n      generated: false,\n      reason: err.response && err.response.data ? err.response.data.error : err.message,\n    };\n  }\n}\n\nfunction createApp() {\n  const app = express();\n  app.use(express.json({ limit: '1mb' }));\n\n  app.post('/api/book-tours', async (req, res) => {\n    const validation = validateBookingRequest(req.body || {});\n    if (!validation.ok) {\n      return res.status(400).json({ error: 'Invalid booking request', details: validation.errors });\n    }\n\n    const runBooking = () => bookToursForLead(req.body);\n    const logResult = result => console.log('[TourAgent] Booking result:', JSON.stringify({\n        leadId: result.leadId,\n        success: result.success,\n        bookings: result.bookings ? result.bookings.length : 0,\n        errors: result.errors ? result.errors.length : 0,\n      }));\n\n    if (validation.request.async) {\n      runBooking().then(logResult).catch(err => console.error('[TourAgent] Booking error:', err));\n      return res.status(202).json({\n        status: 'booking_started',\n        leadId: validation.request.leadId,\n        tourDate: validation.request.tourDate,\n        message: 'Tour booking agent started. Results will be written to CRM.',\n      });\n    }\n\n    const result = await runBooking();\n    logResult(result);\n    return res.status(result && result.success ? 200 : 207).json(result);\n  });\n\n  app.get('/health', (req, res) => {\n    res.json({ status: 'ok', service: 'tour-booking-agent', crmBaseUrl: CRM_BASE_URL });\n  });\n\n  return app;\n}\n\nfunction startServer(port = process.env.PORT || 3001) {\n  const app = createApp();\n  return app.listen(port, () => {\n    console.log(`[TourAgent] running on http://localhost:${port}`);\n    console.log(`[TourAgent] endpoint: POST http://localhost:${port}/api/book-tours`);\n  });\n}\n\nif (require.main === module) {\n  startServer();\n}\n\nmodule.exports = {\n  bookToursForLead,\n  calculateTourSchedule,\n  createApp,\n  detectBookingPlatform,\n  normalizeProperty,\n  startServer,\n  validateBookingRequest,",
+      "lines": 132,
+      "secondFile": {
+        "end": 611,
+        "endLoc": {
+          "column": 25,
+          "line": 611,
+          "position": 20496
+        },
+        "name": "tour-booking-agent.js.backup-test",
+        "start": 480,
+        "startLoc": {
+          "column": 49,
+          "line": 480,
+          "position": 16333
+        }
+      },
+      "tokens": 815
+    },
+    {
+      "firstFile": {
+        "end": 87,
+        "endLoc": {
+          "column": 7,
+          "line": 87,
+          "position": 3044
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 71,
+        "startLoc": {
+          "column": 79,
+          "line": 71,
+          "position": 2603
+        }
+      },
+      "format": "javascript",
+      "fragment": "test('bookToursForLead returns non-mutating dry-run preview from CRM lead data', async () => {\n  const calls = [];\n  const httpClient = {\n    async get(url) {\n      calls.push({ method: 'GET', url });\n      if (url.endsWith('/api/internal/leads/91')) {\n        return {\n          data: {\n            leadId: 91,\n            firstName: 'Casey',\n            lastName: 'Walker',\n            email: 'casey@example.com',\n            phone: '+17135550123',\n            moveInDate: '2026-08-01',\n          },\n        };\n      }",
+      "lines": 17,
+      "secondFile": {
+        "end": 145,
+        "endLoc": {
+          "column": 7,
+          "line": 145,
+          "position": 5160
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 129,
+        "startLoc": {
+          "column": 85,
+          "line": 129,
+          "position": 4719
+        }
+      },
+      "tokens": 79
+    },
+    {
+      "firstFile": {
+        "end": 105,
+        "endLoc": {
+          "column": 27,
+          "line": 105,
+          "position": 3610
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 86,
+        "startLoc": {
+          "column": 8,
+          "line": 86,
+          "position": 3034
+        }
+      },
+      "format": "javascript",
+      "fragment": "        };\n      }\n      throw new Error(`unexpected GET ${url}`);\n    },\n    async post(url, body) {\n      calls.push({ method: 'POST', url, body });\n      if (url.endsWith('/api/internal/tours/create')) {\n        return { data: { tourId: calls.length, ...body } };\n      }\n      if (url.endsWith('/api/internal/leads/91/itinerary')) {\n        return { data: { leadId: 91, generated: true } };\n      }\n      throw new Error(`unexpected POST ${url}`);\n    },\n  };\n\n  const result = await bookToursForLead({\n    leadId: 91,\n    clientPreferredTime: '10:00',\n    tourDate: '2026-07-04',",
+      "lines": 20,
+      "secondFile": {
+        "end": 167,
+        "endLoc": {
+          "column": 27,
+          "line": 167,
+          "position": 5955
+        },
+        "name": "tour-booking-agent.test.js",
+        "start": 148,
+        "startLoc": {
+          "column": 67,
+          "line": 148,
+          "position": 5379
+        }
+      },
+      "tokens": 122
+    }
+  ],
+  "statistics": {
+    "detectionDate": "2026-06-28T22:54:14.469Z",
+    "formats": {
+      "javascript": {
+        "clones": 22,
+        "duplicatedLines": 1385,
+        "duplicatedTokens": 8784,
+        "lines": 2967,
+        "newClones": 0,
+        "newDuplicatedLines": 0,
+        "percentage": 46.68014829794405,
+        "percentageTokens": 45.65725869327928,
+        "sources": 8,
+        "tokens": 19239
+      }
+    },
+    "total": {
+      "clones": 22,
+      "duplicatedLines": 1385,
+      "duplicatedTokens": 8784,
+      "lines": 2967,
+      "newClones": 0,
+      "newDuplicatedLines": 0,
+      "percentage": 46.68014829794405,
+      "percentageTokens": 45.65725869327928,
+      "sources": 8,
+      "tokens": 19239
+    }
+  }
+}
