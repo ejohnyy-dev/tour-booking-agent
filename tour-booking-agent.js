@@ -547,215 +547,249 @@ async function bookLeaselabsTour(page, property, tourDetails) {
   }
 }
 
-async function bookGenericTour(page, property, tourDetails) {
-  try {
-    // 0. Close any promotional lightboxes / popups first
-    await page.keyboard.press('Escape');
+// ─── bookGenericTour helpers ─────────────────────────────────────────────
+// Each helper owns one distinct concern of the generic-platform booking
+// flow so bookGenericTour itself reads as a linear sequence of steps.
+
+async function dismissLightbox(page, property, tourDetails) {
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(500);
+
+  const lightboxHidden = await page.evaluate(() => {
+    const lightbox = document.querySelector('#screen-modular-lightbox, .lightbox-slug-special, .screen-lightbox, .modal-overlay, .popup-overlay');
+    if (lightbox) {
+      lightbox.style.display = 'none';
+      return true;
+    }
+    return false;
+  });
+  if (lightboxHidden) {
+    console.log('[TourAgent] Hidden promotional lightbox');
     await page.waitForTimeout(500);
-    
-    const lightboxHidden = await page.evaluate(() => {
-      const lightbox = document.querySelector('#screen-modular-lightbox, .lightbox-slug-special, .screen-lightbox, .modal-overlay, .popup-overlay');
-      if (lightbox) {
-        lightbox.style.display = 'none';
-        return true;
+  }
+  await captureScreenshot(page, 'after_lightbox_close', tourDetails.leadId || 'unknown', property.name);
+}
+
+const GENERIC_TRIGGER_BUTTON_SELECTORS = [
+  'button:has-text("Schedule Tour")',
+  'button:has-text("Schedule")',
+  'button:has-text("Tour")',
+  'a:has-text("Book")',
+  'a:has-text("Schedule")',
+];
+
+async function clickBookingTriggerButton(page) {
+  for (const selector of GENERIC_TRIGGER_BUTTON_SELECTORS) {
+    const btn = page.locator(selector).first();
+    if (await btn.isVisible().catch(() => false)) {
+      await btn.click();
+      return true;
+    }
+  }
+  return false;
+}
+
+async function findKnockWidgetFrame(page) {
+  const frames = page.frames();
+  for (const f of frames) {
+    try {
+      const title = await f.evaluate(() => document.title).catch(() => '');
+      if (title === 'Knockbot Widgets Frame') {
+        return f;
       }
-      return false;
-    });
-    if (lightboxHidden) {
-      console.log('[TourAgent] Hidden promotional lightbox');
-      await page.waitForTimeout(500);
-    }
-    await captureScreenshot(page, 'after_lightbox_close', tourDetails.leadId || 'unknown', property.name);
+    } catch (e) { /* frame not ready / cross-origin — skip it */ }
+  }
+  return null;
+}
 
-    // 1. Find and click the booking button
-    const buttonSelectors = [
-      'button:has-text("Schedule Tour")',
-      'button:has-text("Schedule")',
-      'button:has-text("Tour")',
-      'a:has-text("Book")',
-      'a:has-text("Schedule")',
-    ];
-    let clicked = false;
-    for (const selector of buttonSelectors) {
-      const btn = page.locator(selector).first();
-      if (await btn.isVisible().catch(() => false)) {
-        await btn.click();
-        clicked = true;
-        break;
+async function fillKnockIframeForm(widgetFrame, tourDetails) {
+  const names = tourDetails.leadName.split(' ');
+  try { await widgetFrame.locator('#firstName').fill(names[0] || ''); } catch (e) { console.log('[TourAgent] firstName fill:', e.message); }
+  try { await widgetFrame.locator('#lastName').fill(names.slice(1).join(' ') || ''); } catch (e) { console.log('[TourAgent] lastName fill:', e.message); }
+  try { await widgetFrame.locator('#email').fill(tourDetails.leadEmail); } catch (e) { console.log('[TourAgent] email fill:', e.message); }
+  try { await widgetFrame.locator('#Phone').fill(tourDetails.leadPhone); } catch (e) { console.log('[TourAgent] phone fill:', e.message); }
+  try { await widgetFrame.locator('textarea').fill('Interested in touring this property'); } catch (e) { console.log('[TourAgent] message fill:', e.message); }
+}
+
+async function findKnockIframeSubmitButton(widgetFrame) {
+  return widgetFrame.evaluate(() => {
+    const btns = document.querySelectorAll('button');
+    for (const b of btns) {
+      const text = b.textContent.trim().toLowerCase();
+      if (text.includes('book') || text.includes('submit') || text.includes('schedule') || text.includes('send')) {
+        return { text: b.textContent.trim(), exists: true };
       }
     }
-    if (!clicked) {
-      return { success: false, error: 'No booking button found on page' };
-    }
-    
-    await page.waitForTimeout(3000); // Wait for modal/iframe to load
-    await captureScreenshot(page, 'after_button_click', tourDetails.leadId || 'unknown', property.name);
+    return { exists: false };
+  });
+}
 
-    // 2. Check for Knock CRM iframe (Knockbot Widgets Frame)
-    let widgetFrame = null;
-    const frames = page.frames();
-    for (const f of frames) {
-      try {
-        const title = await f.evaluate(() => document.title).catch(() => '');
-        if (title === 'Knockbot Widgets Frame') {
-          widgetFrame = f;
-          break;
-        }
-      } catch (e) {}
+async function clickKnockIframeSubmitButton(widgetFrame) {
+  const btns = await widgetFrame.locator('button').all();
+  for (const btn of btns) {
+    const text = await btn.textContent().catch(() => '');
+    if (text.toLowerCase().includes('book') || text.toLowerCase().includes('submit') || text.toLowerCase().includes('schedule')) {
+      await btn.click();
+      break;
     }
+  }
+}
 
-    if (widgetFrame) {
-      console.log('[TourAgent] Found Knock CRM iframe, filling form inside iframe');
-      
-      // Fill fields inside the iframe using Playwright's fill() which handles React properly
-      const names = tourDetails.leadName.split(' ');
-      try { await widgetFrame.locator('#firstName').fill(names[0] || ''); } catch (e) { console.log('[TourAgent] firstName fill:', e.message); }
-      try { await widgetFrame.locator('#lastName').fill(names.slice(1).join(' ') || ''); } catch (e) { console.log('[TourAgent] lastName fill:', e.message); }
-      try { await widgetFrame.locator('#email').fill(tourDetails.leadEmail); } catch (e) { console.log('[TourAgent] email fill:', e.message); }
-      try { await widgetFrame.locator('#Phone').fill(tourDetails.leadPhone); } catch (e) { console.log('[TourAgent] phone fill:', e.message); }
-      try { await widgetFrame.locator('textarea').fill('Interested in touring this property'); } catch (e) { console.log('[TourAgent] message fill:', e.message); }
-      
-      await captureScreenshot(page, 'form_filled', tourDetails.leadId || 'unknown', property.name);
-      
-      // Check for submit button
-      const submitBtn = await widgetFrame.evaluate(() => {
-        const btns = document.querySelectorAll('button');
-        for (const b of btns) {
-          const text = b.textContent.trim().toLowerCase();
-          if (text.includes('book') || text.includes('submit') || text.includes('schedule') || text.includes('send')) {
-            return { text: b.textContent.trim(), exists: true };
-          }
-        }
-        return { exists: false };
-      });
-      
-      if (tourDetails.noSubmit) {
-        console.log('[TourAgent] noSubmit=true, skipping form submission');
-        return {
-          success: true,
-          confirmationNumber: `generic-no-submit-${Date.now()}`,
-          confirmationText: 'Form filled but not submitted (noSubmit mode)',
-          bookedAt: new Date().toISOString(),
-        };
-      }
-      
-      if (submitBtn.exists) {
-        // Find and click the submit button inside the iframe
-        const btns = await widgetFrame.locator('button').all();
-        for (const btn of btns) {
-          const text = await btn.textContent().catch(() => '');
-          if (text.toLowerCase().includes('book') || text.toLowerCase().includes('submit') || text.toLowerCase().includes('schedule')) {
-            await btn.click();
-            break;
-          }
-        }
-      }
-      
-      await page.waitForTimeout(3000);
-      await captureScreenshot(page, 'after_submit', tourDetails.leadId || 'unknown', property.name);
-      
-      // Check for confirmation inside the iframe
-      const confirmationText = await widgetFrame.evaluate(() => {
-        const body = document.body.innerText || '';
-        if (/confirmation|confirmed|booked|thank you|success|submitted|tour scheduled|tour booked/i.test(body)) {
-          return body.substring(0, 200);
-        }
-        return null;
-      });
-      
-      if (confirmationText) {
-        return {
-          success: true,
-          confirmationNumber: `generic-${Date.now()}`,
-          confirmationText,
-          bookedAt: new Date().toISOString(),
-        };
-      }
-      
-      return { success: false, error: 'No confirmation found after iframe form submission' };
+async function readKnockIframeConfirmation(widgetFrame) {
+  return widgetFrame.evaluate(() => {
+    const body = document.body.innerText || '';
+    if (/confirmation|confirmed|booked|thank you|success|submitted|tour scheduled|tour booked/i.test(body)) {
+      return body.substring(0, 200);
     }
+    return null;
+  });
+}
 
-    // 3. Fall back to regular DOM-based form filling (non-iframe)
-    const nameField = page.locator('input[type="text"], input[name*="name"], input[id*="name"], input[placeholder*="name" i]').first();
-    const emailField = page.locator('input[type="email"], input[name*="email"], input[id*="email"]').first();
-    const phoneField = page.locator('input[type="tel"], input[name*="phone"], input[id*="phone"]').first();
-    const firstNameField = page.locator('input[name*="firstName"], input[id*="firstName"], input[name*="first_name"]').first();
-    const lastNameField = page.locator('input[name*="lastName"], input[id*="lastName"], input[name*="last_name"]').first();
+function noSubmitResult() {
+  console.log('[TourAgent] noSubmit=true, skipping form submission');
+  return {
+    success: true,
+    confirmationNumber: `generic-no-submit-${Date.now()}`,
+    confirmationText: 'Form filled but not submitted (noSubmit mode)',
+    bookedAt: new Date().toISOString(),
+  };
+}
 
-    // If firstName/lastName fields exist, use them; otherwise use single name field
-    if (await firstNameField.isVisible().catch(() => false)) {
-      const names = tourDetails.leadName.split(' ');
-      await firstNameField.fill(names[0] || '');
-      if (await lastNameField.isVisible().catch(() => false)) {
-        await lastNameField.fill(names.slice(1).join(' ') || '');
-      }
-    } else if (await nameField.isVisible().catch(() => false)) {
-      await nameField.fill(tourDetails.leadName);
-    }
-    
-    if (await emailField.isVisible().catch(() => false)) await emailField.fill(tourDetails.leadEmail);
-    if (await phoneField.isVisible().catch(() => false)) await phoneField.fill(tourDetails.leadPhone);
-    
-    // Fill additional fields if present (date, time, message)
-    const dateField = page.locator('input[type="date"], input[name*="date"], input[id*="date"]').first();
-    if (await dateField.isVisible().catch(() => false)) await dateField.fill(tourDetails.date || '');
-    
-    const timeField = page.locator('select[name*="time"], select[id*="time"], input[name*="time"]').first();
-    if (await timeField.isVisible().catch(() => false)) {
-      await timeField.selectOption({ label: tourDetails.time }).catch(() => timeField.fill(tourDetails.time));
-    }
-    
-    const messageField = page.locator('textarea[name*="message"], textarea[id*="message"]').first();
-    if (await messageField.isVisible().catch(() => false)) await messageField.fill('Interested in touring this property');
-    
-    await captureScreenshot(page, 'form_filled', tourDetails.leadId || 'unknown', property.name);
+async function bookViaKnockIframe(page, widgetFrame, property, tourDetails) {
+  console.log('[TourAgent] Found Knock CRM iframe, filling form inside iframe');
 
-    // 4. Submit the form (unless noSubmit is true)
-    if (tourDetails.noSubmit) {
-      console.log('[TourAgent] noSubmit=true, skipping form submission');
-      return {
-        success: true,
-        confirmationNumber: `generic-no-submit-${Date.now()}`,
-        confirmationText: 'Form filled but not submitted (noSubmit mode)',
-        bookedAt: new Date().toISOString(),
-      };
-    }
+  await fillKnockIframeForm(widgetFrame, tourDetails);
+  await captureScreenshot(page, 'form_filled', tourDetails.leadId || 'unknown', property.name);
 
-    const submitBtn = page.locator('button[type="submit"], input[type="submit"], button:has-text("Book tour"), button:has-text("Submit"), button:has-text("Schedule")').first();
-    if (await submitBtn.isVisible().catch(() => false)) {
-      await submitBtn.click();
-    } else {
-      const form = page.locator('form').first();
-      if (await form.isVisible().catch(() => false)) await form.evaluate(f => f.submit());
-    }
-    
-    await page.waitForTimeout(2000); // Wait for submission response
-    await captureScreenshot(page, 'after_submit', tourDetails.leadId || 'unknown', property.name);
+  const submitBtn = await findKnockIframeSubmitButton(widgetFrame);
 
-    // 5. Wait for confirmation indicators
-    const confirmationSelectors = [
-      'text=/confirmation|confirmed|booked|thank you|success|submitted/i',
-      'text=/tour scheduled|tour booked|request submitted|we will contact you/i',
-    ];
-    let confirmationText = null;
-    for (const selector of confirmationSelectors) {
-      try {
-        await page.waitForSelector(selector, { timeout: 5000 });
-        confirmationText = await page.textContent(selector).catch(() => null);
-        if (confirmationText) break;
-      } catch { /* try next selector */ }
-    }
+  if (tourDetails.noSubmit) {
+    return noSubmitResult();
+  }
 
-    if (!confirmationText) {
-      return { success: false, error: 'No confirmation text found after form submission' };
-    }
+  if (submitBtn.exists) {
+    await clickKnockIframeSubmitButton(widgetFrame);
+  }
 
+  await page.waitForTimeout(3000);
+  await captureScreenshot(page, 'after_submit', tourDetails.leadId || 'unknown', property.name);
+
+  const confirmationText = await readKnockIframeConfirmation(widgetFrame);
+  if (confirmationText) {
     return {
       success: true,
       confirmationNumber: `generic-${Date.now()}`,
       confirmationText,
       bookedAt: new Date().toISOString(),
     };
+  }
+
+  return { success: false, error: 'No confirmation found after iframe form submission' };
+}
+
+async function fillGenericDomForm(page, tourDetails) {
+  const nameField = page.locator('input[type="text"], input[name*="name"], input[id*="name"], input[placeholder*="name" i]').first();
+  const emailField = page.locator('input[type="email"], input[name*="email"], input[id*="email"]').first();
+  const phoneField = page.locator('input[type="tel"], input[name*="phone"], input[id*="phone"]').first();
+  const firstNameField = page.locator('input[name*="firstName"], input[id*="firstName"], input[name*="first_name"]').first();
+  const lastNameField = page.locator('input[name*="lastName"], input[id*="lastName"], input[name*="last_name"]').first();
+
+  // If firstName/lastName fields exist, use them; otherwise use single name field
+  if (await firstNameField.isVisible().catch(() => false)) {
+    const names = tourDetails.leadName.split(' ');
+    await firstNameField.fill(names[0] || '');
+    if (await lastNameField.isVisible().catch(() => false)) {
+      await lastNameField.fill(names.slice(1).join(' ') || '');
+    }
+  } else if (await nameField.isVisible().catch(() => false)) {
+    await nameField.fill(tourDetails.leadName);
+  }
+
+  if (await emailField.isVisible().catch(() => false)) await emailField.fill(tourDetails.leadEmail);
+  if (await phoneField.isVisible().catch(() => false)) await phoneField.fill(tourDetails.leadPhone);
+
+  // Fill additional fields if present (date, time, message)
+  const dateField = page.locator('input[type="date"], input[name*="date"], input[id*="date"]').first();
+  if (await dateField.isVisible().catch(() => false)) await dateField.fill(tourDetails.date || '');
+
+  const timeField = page.locator('select[name*="time"], select[id*="time"], input[name*="time"]').first();
+  if (await timeField.isVisible().catch(() => false)) {
+    await timeField.selectOption({ label: tourDetails.time }).catch(() => timeField.fill(tourDetails.time));
+  }
+
+  const messageField = page.locator('textarea[name*="message"], textarea[id*="message"]').first();
+  if (await messageField.isVisible().catch(() => false)) await messageField.fill('Interested in touring this property');
+}
+
+async function submitGenericDomForm(page) {
+  const submitBtn = page.locator('button[type="submit"], input[type="submit"], button:has-text("Book tour"), button:has-text("Submit"), button:has-text("Schedule")').first();
+  if (await submitBtn.isVisible().catch(() => false)) {
+    await submitBtn.click();
+  } else {
+    const form = page.locator('form').first();
+    if (await form.isVisible().catch(() => false)) await form.evaluate(f => f.submit());
+  }
+}
+
+const GENERIC_CONFIRMATION_SELECTORS = [
+  'text=/confirmation|confirmed|booked|thank you|success|submitted/i',
+  'text=/tour scheduled|tour booked|request submitted|we will contact you/i',
+];
+
+async function readGenericDomConfirmation(page) {
+  for (const selector of GENERIC_CONFIRMATION_SELECTORS) {
+    try {
+      await page.waitForSelector(selector, { timeout: 5000 });
+      const confirmationText = await page.textContent(selector).catch(() => null);
+      if (confirmationText) return confirmationText;
+    } catch { /* try next selector */ }
+  }
+  return null;
+}
+
+async function bookViaGenericDomForm(page, property, tourDetails) {
+  await fillGenericDomForm(page, tourDetails);
+  await captureScreenshot(page, 'form_filled', tourDetails.leadId || 'unknown', property.name);
+
+  if (tourDetails.noSubmit) {
+    return noSubmitResult();
+  }
+
+  await submitGenericDomForm(page);
+  await page.waitForTimeout(2000); // Wait for submission response
+  await captureScreenshot(page, 'after_submit', tourDetails.leadId || 'unknown', property.name);
+
+  const confirmationText = await readGenericDomConfirmation(page);
+  if (!confirmationText) {
+    return { success: false, error: 'No confirmation text found after form submission' };
+  }
+
+  return {
+    success: true,
+    confirmationNumber: `generic-${Date.now()}`,
+    confirmationText,
+    bookedAt: new Date().toISOString(),
+  };
+}
+
+async function bookGenericTour(page, property, tourDetails) {
+  try {
+    await dismissLightbox(page, property, tourDetails);
+
+    const clicked = await clickBookingTriggerButton(page);
+    if (!clicked) {
+      return { success: false, error: 'No booking button found on page' };
+    }
+
+    await page.waitForTimeout(3000); // Wait for modal/iframe to load
+    await captureScreenshot(page, 'after_button_click', tourDetails.leadId || 'unknown', property.name);
+
+    const widgetFrame = await findKnockWidgetFrame(page);
+    if (widgetFrame) {
+      return await bookViaKnockIframe(page, widgetFrame, property, tourDetails);
+    }
+
+    return await bookViaGenericDomForm(page, property, tourDetails);
   } catch (err) {
     return { success: false, error: `Generic booking failed: ${err.message}` };
   }
@@ -888,4 +922,5 @@ module.exports = {
   // Export new helpers for testing
   captureScreenshot,
   preFlightCheck,
+  bookGenericTour,
 };
